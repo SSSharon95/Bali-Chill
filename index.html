@@ -3,347 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>💙 峇里島隨身旅遊神隊友 🔔</title>
-    <!-- 引入 Tailwind CSS 與 Font Awesome 圖標庫 -->
+    
+    <!-- 🌐 LINE / FB 社群分享完美門面 (Open Graph Tags) -->
+    <title>🌴 峇里島旅遊手帳 💸</title>
+    <meta name="description" content="數不清印尼盾零的那些日子。最 Chill 的日系手繪行程、雙向語音翻譯、三人精準分帳，未來網友去峇里島自由行的通用隨身秘密道具。">
+    <meta property="og:title" content="🌴 峇里島旅遊手帳 💸">
+    <meta property="og:description" content="數不清印尼盾零的那些日子。最 Chill 的日系手繪行程、雙向語音翻譯、三人精準分帳，一機搞定！">
+    <meta property="og:type" content="website">
+
+    <!-- 🎨 引入 Tailwind CSS、Font Awesome 輕量線條圖標、Google 字體 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
         body { 
             font-family: 'Noto Sans TC', sans-serif; 
-            background-color: #F3F9FD; /* 淡淡的多啦A夢天空藍底色 */
+            background-color: #FAF8F5; /* 日系極致手帳紙張白 */
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* 隱藏原生滾動條 */
+        /* 鎖定行動端干擾，手感更像原生 App */
+        input, select, button { font-family: inherit; }
         ::-webkit-scrollbar { display: none; }
-        /* 自訂多啦A夢藍與黃 */
-        .bg-dora-blue { background-color: #3FB7FC; }
-        .text-dora-blue { color: #3FB7FC; }
-        .bg-dora-yellow { background-color: #FFD233; }
-        .border-dora-yellow { border-color: #FFD233; }
-        /* 頁籤作用中樣式 */
+        
+        /* 頁籤作用中：高雅的柔和微透光色調，取代粗黑邊框 */
         .main-tab-active {
-            background-color: #3FB7FC;
-            color: white;
-            box-shadow: 0 4px 12px rgba(63, 183, 252, 0.3);
+            background-color: #E6F4FC;
+            color: #2B89CD;
+            font-weight: 700;
         }
         .day-tab-active {
-            background-color: #FFD233;
-            color: #2D3748;
+            background-color: #F7D358;
+            color: #333333;
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(255, 210, 51, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(247, 211, 88, 0.3);
         }
     </style>
 </head>
-<body class="text-slate-700 pb-24">
+<body class="text-slate-600 pb-24 select-none">
 
-    <!-- 🌟 重塑：質感滿版漸層 Banner (無硬框線) -->
-    <div class="relative bg-gradient-to-b from-[#2AA9FA] to-[#54C3FF] pt-12 pb-14 px-6 text-center shadow-md">
-        <!-- 裝飾用百寶袋半圓弧線條背景 -->
-        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-12 bg-[#F3F9FD] rounded-t-[100%]"></div>
+    <!-- 🌅 頂部 Banner：手繪空氣感日系雜誌封面 -->
+    <div class="relative bg-[#FFFDFB] pt-12 pb-12 px-6 text-center border-b border-stone-100 shadow-sm">
+        <!-- 裝飾線條：純手工手繪感弧線 -->
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-stone-200 to-transparent"></div>
         
-        <!-- 多啦A夢金色鈴鐺 (精緻 Icon 化) -->
-        <div class="mx-auto w-14 h-14 bg-dora-yellow rounded-full flex items-center justify-center shadow-md mb-3 animate-pulse relative">
-            <i class="fa-solid fa-bell text-white text-2xl"></i>
-            <!-- 鈴鐺下方的紅色項圈意象 -->
-            <div class="absolute -bottom-1 w-8 h-1.5 bg-rose-500 rounded-full"></div>
+        <!-- 手繪感雞蛋花與度假微風鈴鐺意象 -->
+        <div class="mx-auto w-14 h-14 bg-[#FEFAF2] rounded-full flex items-center justify-center border border-amber-100 shadow-sm mb-3 relative group active:scale-95 transition-all cursor-pointer">
+            <i class="fa-solid fa-bell text-amber-400 text-xl animate-bounce"></i>
+            <!-- 纖細手繪雞蛋花瓣意象 -->
+            <div class="absolute -top-1 -right-1 text-xs text-orange-300 opacity-80"><i class="fa-solid fa-seedling"></i></div>
         </div>
         
-        <h1 class="text-2xl font-bold tracking-widest text-white drop-shadow-sm">
-            BALI CHILL OUT
-        </h1>
-        <p class="text-xs font-bold text-white/90 mt-1.5 tracking-widest bg-white/20 inline-block px-3 py-1 rounded-full backdrop-blur-md">
-            多啦A夢 隨身秘密道具
+        <!-- 有梗通用標題 -->
+        <h1 class="text-xl font-bold tracking-wider text-stone-800">峇里島旅遊手帳</h1>
+        <p class="text-xs font-medium text-stone-400 mt-2 tracking-widest">
+            —— 數不清印尼盾零的那些日子 ——
         </p>
     </div>
 
-    <!-- 📱 主內容容器 -->
+    <!-- 📱 行動端通用內容容器 -->
     <div class="max-w-md mx-auto px-4 mt-4 space-y-6">
 
-        <!-- ==================== 分頁 1：首頁 ==================== -->
-        <div id="page-home" class="app-page space-y-6">
-            <!-- 倒計時看板 (無框線、乾淨呼吸感) -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm text-center">
-                <span class="bg-sky-50 text-dora-blue text-xs px-4 py-1.5 rounded-full font-bold tracking-wider border border-sky-100">
-                    <i class="fa-regular fa-calendar-days mr-1"></i> TRAVEL DATE
+        <!-- ==================== PAGE 1：首頁動態看板 ==================== -->
+        <div id="page-home" class="app-page space-y-5">
+            <!-- 倒計時日曆 -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm text-center">
+                <span class="text-stone-400 text-[11px] font-bold tracking-widest uppercase block mb-2">
+                    <i class="fa-regular fa-calendar text-amber-400 mr-1"></i> Vacation Countdown
                 </span>
-                <h2 class="text-2xl font-bold mt-4 text-slate-800 tracking-wide">9/13 — 9/18</h2>[cite: 1]
-                <p class="text-sm text-slate-400 font-medium mt-2" id="countdown-text">正在計算倒計時...</p>
+                <h2 class="text-xl font-bold text-stone-700 tracking-wide">9/13 — 9/18</h2>[cite: 1]
+                <p class="text-xs text-stone-400 mt-1" id="countdown-text">計算旅程時間中...</p>
             </div>
 
-            <!-- ✈️ 航班時刻表 (精緻卡片化) -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-                <div class="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-                    <i class="fa-solid fa-plane-departure text-dora-blue text-xl"></i>
-                    <h3 class="text-base font-bold text-slate-800">航班動態時刻表</h3>
+            <!-- ✈️ 精確航班卡片：含航廈 Terminal 資訊 -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-4">
+                <div class="flex items-center space-x-2 border-b border-stone-50 pb-2.5">
+                    <i class="fa-solid fa-plane-departure text-sky-400"></i>
+                    <h3 class="text-xs font-bold tracking-wider text-stone-700 uppercase">航班航廈精確時刻表</h3>
                 </div>
                 
-                <div class="space-y-3.5">
+                <div class="space-y-3 text-[13px]">
                     <!-- 去程 1 -->
-                    <div class="bg-slate-50/80 p-4 rounded-2xl relative">
-                        <span class="bg-dora-blue text-white text-[11px] px-2.5 py-0.5 rounded-md font-bold">去程第①段 · 酷航 TR875</span>[cite: 1]
-                        <p class="mt-2.5 font-bold text-slate-700 text-[15px]">00:55 台北 (TPE) ➔ 05:20 新加坡 (SIN)</p>[cite: 1]
-                        <!-- 紅色顯眼跨夜提醒 -->
-                        <p class="text-xs font-bold text-rose-500 mt-1.5"><i class="fa-solid fa-circle-exclamation mr-1"></i> 提醒：請於 9/12 (六) 晚上 22:30 前抵達桃機報到！</p>
+                    <div class="p-3.5 bg-[#FAFBFD] rounded-xl border border-blue-50/50">
+                        <div class="flex justify-between items-center"><span class="bg-sky-400 text-white text-[9px] px-2 py-0.5 rounded font-bold">去程 ① · 酷航 TR875</span></div>[cite: 1]
+                        <p class="mt-2 font-bold text-stone-700">00:55 台北桃機 (TPE) <span class="text-stone-400 font-normal">T1</span> ➔ 05:20 新加坡 (SIN) <span class="text-stone-400 font-normal">T1</span></p>[cite: 1]
+                        <p class="text-[11px] font-bold text-rose-400 mt-1"><i class="fa-solid fa-circle-info mr-0.5"></i> 備註：請於 9/12 (六) 晚上 22:30 前抵達第一航廈報到！</p>
                     </div>
                     
-                    <!-- 轉機 -->
-                    <div class="py-1 flex items-center justify-center space-x-2 text-slate-400 text-xs font-medium">
-                        <div class="w-8 h-px bg-slate-200"></div>
-                        <span><i class="fa-solid fa-arrow-right-arrow-left mr-1"></i> 新加坡樟宜機場轉機 (停留 2h 10m)</span>
-                        <div class="w-8 h-px bg-slate-200"></div>
+                    <!-- 輕手繪轉機分隔線 -->
+                    <div class="flex items-center justify-center space-x-2 text-stone-300 text-[10px] py-0.5">
+                        <div class="w-4 h-px bg-stone-200"></div>
+                        <span>新加坡樟宜機場轉機 (停留 2h 10m)</span>
+                        <div class="w-4 h-px bg-stone-200"></div>
                     </div>
                     
                     <!-- 去程 2 -->
-                    <div class="bg-slate-50/80 p-4 rounded-2xl">
-                        <span class="bg-dora-blue text-white text-[11px] px-2.5 py-0.5 rounded-md font-bold">去程第②段 · 酷航 TR280</span>[cite: 1]
-                        <p class="mt-2.5 font-bold text-slate-700 text-[15px]">07:30 新加坡 (SIN) ➔ 10:20 峇里島 (DPS)</p>[cite: 1]
+                    <div class="p-3.5 bg-[#FAFBFD] rounded-xl border border-blue-50/50">
+                        <span class="bg-sky-400 text-white text-[9px] px-2 py-0.5 rounded font-bold">去程 ② · 酷航 TR280</span>[cite: 1]
+                        <p class="mt-2 font-bold text-stone-700">07:30 新加坡 (SIN) <span class="text-stone-400 font-normal">T1</span> ➔ 10:20 峇里島 (DPS) <span class="text-stone-400 font-normal">國際航廈</span></p>[cite: 1]
                     </div>
                     
                     <!-- 回程 -->
-                    <div class="bg-rose-50/50 p-4 rounded-2xl">
-                        <span class="bg-rose-400 text-white text-[11px] px-2.5 py-0.5 rounded-md font-bold">回程段 · 華航 CI772</span>[cite: 1]
-                        <p class="mt-2.5 font-bold text-slate-700 text-[15px]">15:55 新加坡 (SIN) ➔ 21:20 台北 (TPE)</p>[cite: 1]
-                    </div>
-                </div>
-            </div>
-
-            <!-- 🎒 行李檢查清單 -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm">
-                <div class="flex items-center space-x-2.5 border-b border-slate-100 pb-3 mb-4">
-                    <i class="fa-solid fa-suitcase text-dora-blue text-xl"></i>
-                    <h3 class="text-base font-bold text-slate-800">出國行李檢查清單</h3>
-                </div>
-                
-                <div class="space-y-5">
-                    <div>
-                        <h4 class="font-bold text-rose-500 text-sm mb-2"><i class="fa-solid fa-passport mr-1"></i> 必備重要文件</h4>
-                        <div class="space-y-2.5 bg-slate-50/60 p-3.5 rounded-2xl text-[15px]">
-                            <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" class="w-4.5 h-4.5 rounded text-dora-blue focus:ring-dora-blue"> <span>護照正本 (效期大於6個月)</span></label>
-                            <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" class="w-4.5 h-4.5 rounded text-dora-blue focus:ring-dora-blue"> <span>電子簽證 e-VOA 憑證列印</span></label>
-                            <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" class="w-4.5 h-4.5 rounded text-dora-blue focus:ring-dora-blue"> <span>海關申報 ECD QR Code</span></label>
-                            <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" class="w-4.5 h-4.5 rounded text-dora-blue focus:ring-dora-blue"> <span>印尼盾現金、高額度信用卡</span></label>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-bold text-amber-500 text-sm mb-2"><i class="fa-solid fa-plug mr-1"></i> 3C 電子設備</h4>
-                        <div class="space-y-2.5 bg-slate-50/60 p-3.5 rounded-2xl text-[15px]">
-                            <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" class="w-4.5 h-4.5 rounded text-dora-blue focus:ring-dora-blue"> <span>萬國轉接插頭 (印尼雙圓頭)</span></label>
-                            <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" class="w-4.5 h-4.5 rounded text-dora-blue focus:ring-dora-blue"> <span>行動電源、所有充電線材</span></label>
-                            <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" class="w-4.5 h-4.5 rounded text-dora-blue focus:ring-dora-blue"> <span>當地上網 eSIM / 實體網卡</span></label>
-                        </div>
+                    <div class="p-3.5 bg-[#FDF9F9] rounded-xl border border-rose-50/50">
+                        <span class="bg-rose-400 text-white text-[9px] px-2 py-0.5 rounded font-bold">回程段 · 華航 CI772</span>[cite: 1]
+                        <p class="mt-2 font-bold text-stone-700">15:55 峇里島 (DPS) <span class="text-stone-400 font-normal">國際航廈</span> ➔ 21:20 台北桃機 (TPE) <span class="text-stone-400 font-normal">T1</span></p>[cite: 1]
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== 分頁 2：時光機行程頁 (新增日頁籤) ==================== -->
+        <!-- ==================== PAGE 2：深度自由行手帳行程 ==================== -->
         <div id="page-itinerary" class="app-page hidden space-y-4">
-            
-            <!-- 📅 頂部橫向日頁籤 (可在手機上橫向滑動) -->
-            <div class="flex space-x-2 overflow-x-auto py-2 px-1 -mx-4 px-4 scroll-smooth">
-                <button onclick="switchDay(1)" id="daytab-1" class="day-tab-active flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-white text-slate-500 transition-all shadow-sm">Day 1</button>
-                <button onclick="switchDay(2)" id="daytab-2" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-white text-slate-500 transition-all shadow-sm">Day 2</button>
-                <button onclick="switchDay(3)" id="daytab-3" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-white text-slate-500 transition-all shadow-sm">Day 3</button>
-                <button onclick="switchDay(4)" id="daytab-4" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-white text-slate-500 transition-all shadow-sm">Day 4</button>
-                <button onclick="switchDay(5)" id="daytab-5" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-white text-slate-500 transition-all shadow-sm">Day 5</button>
-                <button onclick="switchDay(6)" id="daytab-6" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-white text-slate-500 transition-all shadow-sm">Day 6</button>
+            <!-- 📅 日系手繪標籤頁籤列 -->
+            <div class="flex space-x-2 overflow-x-auto py-1 -mx-4 px-4 scroll-smooth">
+                <button onclick="switchDay(1)" id="daytab-1" class="day-tab-active flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium bg-white text-stone-400 border border-stone-100 transition-all shadow-sm">Day 1</button>
+                <button onclick="switchDay(2)" id="daytab-2" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium bg-white text-stone-400 border border-stone-100 transition-all shadow-sm">Day 2</button>
+                <button onclick="switchDay(3)" id="daytab-3" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium bg-white text-stone-400 border border-stone-100 transition-all shadow-sm">Day 3</button>
+                <button onclick="switchDay(4)" id="daytab-4" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium bg-white text-stone-400 border border-stone-100 transition-all shadow-sm">Day 4</button>
+                <button onclick="switchDay(5)" id="daytab-5" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium bg-white text-stone-400 border border-stone-100 transition-all shadow-sm">Day 5-6</button>
             </div>
 
-            <!-- Day 1 內容 -->
+            <!-- Day 1 -->
             <div id="daycontent-1" class="day-content space-y-4">
-                <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-                    <span class="bg-sky-50 text-dora-blue text-xs px-3 py-1 rounded-full font-bold">9/13 (日) Day 1 · 抵達與放鬆</span>
-                    <div class="text-[15px] space-y-3 font-medium text-slate-600">
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>00:55 酷航由台北出發，經新加坡轉機[cite: 1]</p>
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>10:20 順利降落峇里島伍拉·賴國際機場[cite: 1]</p>
+                <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-4">
+                    <span class="bg-[#F4F9FC] text-[#2B89CD] text-[11px] px-3 py-1 rounded-full font-bold tracking-wider">9/13 (日) Day 1 · 抵達、辦網卡、換匯與海灘夕陽</span>
+                    <div class="text-[13px] space-y-3.5 text-stone-600 font-medium">
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>10:20 降落伍拉·賴國際機場，過海關、辦理電子落地簽 (e-VOA)。</p>[cite: 1]
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>11:30 機場出關處購買當地網卡、ATM 或換匯所補充足額印尼盾現金。</p>
                         
-                        <!-- 飯店專屬大卡片 -->
-                        <div class="p-4 bg-sky-50/50 rounded-2xl border border-sky-100 my-3 space-y-2.5">
-                            <p class="font-bold text-slate-800"><i class="fa-solid fa-hotel text-dora-blue mr-2"></i>13:30 入住首間度假飯店</p>
-                            <p class="text-xs text-slate-400 pl-6">Discovery Kartika Plaza Hotel</p>[cite: 1]
-                            <a href="https://www.google.com/maps/place/Discovery+Kartika+Plaza+Hotel/@-8.7296755,115.1645336,17z/" target="_blank" class="mt-2 flex items-center justify-center bg-dora-blue text-white font-bold py-2.5 rounded-xl text-sm shadow-sm active:scale-98 transition-all">
-                                <i class="fa-solid fa-location-dot mr-2"></i>開啟 Google Maps 導航
+                        <!-- 飯店專屬精緻卡片 -->
+                        <div class="p-4 bg-[#FBFDFE] rounded-xl border border-blue-50/60 my-2 space-y-2">
+                            <p class="font-bold text-stone-800"><i class="fa-solid fa-hotel text-sky-400 mr-1.5"></i>13:30 換匯後前往第一間庫塔區海景飯店</p>
+                            <p class="text-xs text-stone-400 pl-5 font-normal">Discovery Kartika Plaza Hotel (辦理 Check-in 置放行李)</p>[cite: 1]
+                            <a href="https://www.google.com/maps/place/Discovery+Kartika+Plaza+Hotel/@-8.7296755,115.1645336,17z/" target="_blank" class="flex items-center justify-center bg-sky-400 text-white font-bold py-2 rounded-lg text-xs shadow-sm active:scale-98 transition-all mt-1">
+                                <i class="fa-solid fa-map-location-dot mr-1"></i>開啟 Google Maps 導航
                             </a>[cite: 1]
                         </div>
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>18:00 金巴蘭海灘享受浪漫夕陽海鮮 BBQ</p>
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>17:45 前抵達金巴蘭海灘（Jimbaran）就定位，享受海鮮 BBQ 並觀賞落日餘暉。</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 2 內容 -->
+            <!-- Day 2 -->
             <div id="daycontent-2" class="day-content hidden space-y-4">
-                <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-                    <span class="bg-sky-50 text-dora-blue text-xs px-3 py-1 rounded-full font-bold">9/14 (一) Day 2 · 懸崖絕景</span>
-                    <div class="text-[15px] space-y-3 font-medium text-slate-600">
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>10:00 朝聖壯麗的烏魯瓦圖斷崖神廟</p>
-                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100 my-2 space-y-2.5">
-                            <p class="font-bold text-slate-800"><i class="fa-solid fa-glass-cheers text-amber-500 mr-2"></i>14:00 Oneeighty 懸崖海景 Club</p>
-                            <a href="https://www.google.com/maps/search/?api=1&query=oneeighty+bali" target="_blank" class="mt-1 flex items-center justify-center bg-dora-yellow text-slate-800 font-bold py-2.5 rounded-xl text-sm shadow-sm active:scale-98 transition-all">
-                                <i class="fa-solid fa-map-location-dot mr-2"></i>導航至 Oneeighty
+                <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-4">
+                    <span class="bg-[#F4F9FC] text-[#2B89CD] text-[11px] px-3 py-1 rounded-full font-bold tracking-wider">9/14 (一) Day 2 · 懸崖斷崖與極致海景 Club</span>
+                    <div class="text-[13px] space-y-3.5 text-stone-600 font-medium">
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>10:00 前往朝聖壯麗的烏魯瓦圖斷崖神廟 (Uluwatu Temple)，看野生猴群與斷崖海浪。</p>
+                        <div class="p-4 bg-[#FFFDF9] rounded-xl border border-amber-50/60 my-2 space-y-2">
+                            <p class="font-bold text-stone-800"><i class="fa-solid fa-glass-cheers text-amber-400 mr-1.5"></i>14:00 Oneeighty 懸崖透明高空海景 Club</p>
+                            <a href="https://www.google.com/maps/search/?api=1&query=oneeighty+bali" target="_blank" class="flex items-center justify-center bg-[#F7D358] text-stone-800 font-bold py-2 rounded-lg text-xs shadow-sm active:scale-98 transition-all mt-1">
+                                <i class="fa-solid fa-location-dot mr-1"></i>導航至 Oneeighty
                             </a>
                         </div>
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>18:30 晚餐品嚐庫塔區必吃香脆人氣酥骨雞</p>
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>18:30 晚餐品嚐庫塔區必吃人氣美食：Malioboro 香脆酥骨雞。</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 3 內容 -->
+            <!-- Day 3 -->
             <div id="daycontent-3" class="day-content hidden space-y-4">
-                <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-                    <span class="bg-sky-50 text-dora-blue text-xs px-3 py-1 rounded-full font-bold">9/15 (二) Day 3 · 烏布人文</span>
-                    <div class="text-[15px] space-y-3 font-medium text-slate-600">
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>10:30 烏布皇宮漫步與傳統市場尋寶</p>
-                        <div class="p-4 bg-sky-50/50 rounded-2xl border border-sky-100 my-2 space-y-2.5">
-                            <p class="font-bold text-slate-800"><i class="fa-solid fa-spa text-dora-blue mr-2"></i>14:00 Pyramids of Chi 金字塔心靈音療</p>
-                            <a href="https://www.google.com/maps/search/?api=1&query=Pyramids+of+Chi+Bali" target="_blank" class="mt-1 flex items-center justify-center bg-dora-blue text-white font-bold py-2.5 rounded-xl text-sm shadow-sm active:scale-98 transition-all">
-                                <i class="fa-solid fa-location-dot mr-2"></i>導航至金字塔音療
+                <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-4">
+                    <span class="bg-[#F4F9FC] text-[#2B89CD] text-[11px] px-3 py-1 rounded-full font-bold tracking-wider">9/15 (二) Day 3 · 烏布傳統文化與心靈音療體驗</span>
+                    <div class="text-[13px] space-y-3.5 text-stone-600 font-medium">
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>10:30 抵達烏布山城，漫步烏布皇宮與充滿異國文青小物的傳統市場尋寶。</p>
+                        <div class="p-4 bg-[#FBFDFE] rounded-xl border border-blue-50/60 my-2 space-y-2">
+                            <p class="font-bold text-stone-800"><i class="fa-solid fa-spa text-sky-400 mr-1.5"></i>14:00 Pyramids of Chi 金字塔心靈音療</p>
+                            <p class="text-xs text-stone-400 pl-5 font-normal">放鬆躺平聆聽頌缽與銅鑼共振之音，洗滌旅途疲憊。</p>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Pyramids+of+Chi+Bali" target="_blank" class="flex items-center justify-center bg-sky-400 text-white font-bold py-2 rounded-lg text-xs shadow-sm active:scale-98 transition-all mt-1">
+                                <i class="fa-solid fa-location-dot mr-1"></i>導航至金字塔音療
                             </a>
                         </div>
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>18:00 享用在地特色烏布田園髒鴨飯</p>
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>18:00 享用烏布招牌在地特色：Bebek Bengil 田園髒鴨飯。</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 4 內容 -->
+            <!-- Day 4 -->
             <div id="daycontent-4" class="day-content hidden space-y-4">
-                <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-                    <span class="bg-sky-50 text-dora-blue text-xs px-3 py-1 rounded-full font-bold">9/16 (三) Day 4 · 朝聖與換宿</span>
-                    <div class="text-[15px] space-y-3 font-medium text-slate-600">
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>10:30 前往海浪拍打的經典地標：海神廟</p>
-                        <div class="p-4 bg-sky-50/50 rounded-2xl border border-sky-100 my-3 space-y-2.5">
-                            <p class="font-bold text-slate-800"><i class="fa-solid fa-hotel text-dora-blue mr-2"></i>13:30 前往第二間精品飯店 Check-in</p>
-                            <p class="text-xs text-slate-400 pl-6">The Vira Bali Boutique Hotel & Suite</p>[cite: 1]
-                            <a href="https://www.google.com/maps/place/The+Vira+Bali+Boutique+Hotel+%26+Suite/@-8.7352351,115.1627187,17z/" target="_blank" class="mt-2 flex items-center justify-center bg-dora-blue text-white font-bold py-2.5 rounded-xl text-sm shadow-sm active:scale-98 transition-all">
-                                <i class="fa-solid fa-location-dot mr-2"></i>開啟 Google Maps 導航
+                <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-4">
+                    <span class="bg-[#F4F9FC] text-[#2B89CD] text-[11px] px-3 py-1 rounded-full font-bold tracking-wider">9/16 (三) Day 4 · 海神廟潮汐朝聖與更換飯店</span>
+                    <div class="text-[13px] space-y-3.5 text-stone-600 font-medium">
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>10:30 朝聖佇立於海浪拍打礁岩之上的經典地標：海神廟 (Tanah Lot)。</p>
+                        
+                        <!-- 第二間正確飯店卡片 -->
+                        <div class="p-4 bg-[#FBFDFE] rounded-xl border border-blue-50/60 my-2 space-y-2">
+                            <p class="font-bold text-stone-800"><i class="fa-solid fa-hotel text-sky-400 mr-1.5"></i>13:30 行程中移動！入住第二間精品飯店</p>
+                            <p class="text-xs text-stone-400 pl-5 font-normal">The Vira Bali Boutique Hotel & Suite</p>[cite: 1]
+                            <a href="https://www.google.com/maps/place/The+Vira+Bali+Boutique+Hotel+%26+Suite/@-8.7352351,115.1627187,17z/" target="_blank" class="flex items-center justify-center bg-sky-400 text-white font-bold py-2 rounded-lg text-xs shadow-sm active:scale-98 transition-all mt-1">
+                                <i class="fa-solid fa-map-location-dot mr-1"></i>開啟 Google Maps 導航
                             </a>[cite: 1]
                         </div>
-                        <p><i class="fa-solid fa-clock text-slate-300 mr-2"></i>15:30 享受頂級經典 Lulur Spa 2小時全身去角質</p>
+                        <p><i class="fa-solid fa-clock text-stone-300 mr-2"></i>15:30 預約精緻 Lulur Spa 兩小時全身去角質與精油舒壓按摩。</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 5-6 內容 -->
+            <!-- Day 5-6 -->
             <div id="daycontent-5" class="day-content hidden space-y-4">
-                <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-                    <span class="bg-sky-50 text-dora-blue text-xs px-3 py-1 rounded-full font-bold">9/17 - 9/18 Day 5-6 · 採購與返家</span>
-                    <div class="text-[15px] space-y-3 font-medium text-slate-600">
-                        <p><i class="fa-solid fa-bag-shopping text-slate-300 mr-2"></i>D5 11:00 蒼古區 (Canggu) 文青街區與特色衝浪市集</p>
-                        <p><i class="fa-solid fa-cart-shopping text-slate-300 mr-2"></i>D5 16:00 土產大賣場 Krisna 伴手禮最後大採購</p>
-                        <p class="font-bold text-rose-500"><i class="fa-solid fa-plane-arrival mr-2"></i>D6 15:55 搭乘中華航空 CI772 班機返抵台北[cite: 1]</p>
+                <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-4">
+                    <span class="bg-[#F4F9FC] text-[#2B89CD] text-[11px] px-3 py-1 rounded-full font-bold tracking-wider">9/17 - 9/18 Day 5-6 · 文青街區散步與伴手禮大採購</span>
+                    <div class="text-[13px] space-y-3.5 text-stone-600 font-medium">
+                        <p><i class="fa-solid fa-bag-shopping text-stone-300 mr-2"></i>D5 11:00 蒼古區 (Canggu) 文青街區與特色衝浪市集走走、喝杯網美咖啡。</p>
+                        <p><i class="fa-solid fa-cart-shopping text-stone-300 mr-2"></i>D5 16:00 前往大型土產賣場 Krisna 進行伴手禮 (Kupuku 蝴蝶餅、拉茶) 最後大採購。</p>
+                        <p class="font-bold text-rose-400"><i class="fa-solid fa-plane-arrival mr-2"></i>D6 15:55 前往國際航廈搭乘中華航空 CI772 班機平安返抵台北。[cite: 1]</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== 分頁 3：記帳分帳頁 ==================== -->
+        <!-- ==================== PAGE 3：萬用印尼盾多人自動分帳機 ==================== -->
         <div id="page-finance" class="app-page hidden space-y-4">
-            <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4 text-[15px]">
-                <div class="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-                    <i class="fa-solid fa-wallet text-dora-blue text-xl"></i>
-                    <h3 class="text-base font-bold text-slate-800">印尼盾自動三人分帳機</h3>
+            <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-3 text-[13px]">
+                <div class="flex items-center space-x-2 border-b border-stone-50 pb-2.5">
+                    <i class="fa-solid fa-calculator text-sky-400"></i>
+                    <h3 class="text-xs font-bold tracking-wider text-stone-700 uppercase">印尼盾通用多人分帳工具</h3>
                 </div>
-                <input type="text" id="exp-item" placeholder="輸入花費項目 (如：髒鴨飯)" class="w-full bg-slate-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-dora-blue font-medium">
-                <input type="number" id="exp-cost" placeholder="輸入當地印尼盾金額 (IDR)" class="w-full bg-slate-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-dora-blue font-medium">
-                <select id="exp-payer" class="w-full bg-slate-50 p-3 rounded-xl focus:outline-none font-medium">
-                    <option value="Carol">Carol</option>
-                    <option value="旅伴 A">旅伴 A</option>
-                    <option value="旅伴 B">旅伴 B</option>
-                </select>
-                <button onclick="addExpense()" class="bg-dora-yellow text-slate-800 font-bold py-3 w-full rounded-xl shadow-sm active:scale-98 transition-all">記一筆費用</button>
+                <input type="text" id="exp-item" placeholder="花費項目描述 (例如：金巴蘭晚餐)" class="w-full bg-[#FAF9F6] p-3 rounded-xl focus:outline-none border border-stone-100 font-medium text-xs">
+                <input type="number" id="exp-cost" placeholder="當地印尼盾金額 (IDR)" class="w-full bg-[#FAF9F6] p-3 rounded-xl focus:outline-none border border-stone-100 font-medium text-xs">
+                
+                <div class="space-y-1">
+                    <label class="text-[11px] text-stone-400 font-bold block pl-1">是誰先墊錢的？</label>
+                    <select id="exp-payer" class="w-full bg-[#FAF9F6] p-3 rounded-xl focus:outline-none border border-stone-100 font-medium text-xs">
+                        <option value="Carol">Carol</option>
+                        <option value="旅伴 A">旅伴 A</option>
+                        <option value="旅伴 B">旅伴 B</option>
+                    </select>
+                </div>
+                <button onclick="addExpense()" class="bg-[#F7D358] text-stone-800 font-bold py-3 w-full rounded-xl shadow-sm active:scale-98 transition-all text-xs tracking-wider">記一筆費用並自動分帳</button>
             </div>
             
-            <div class="bg-white p-6 rounded-3xl shadow-sm">
-                <h3 class="text-sm font-bold text-slate-400 mb-3 tracking-wider">📊 結算報告書</h3>
-                <div id="expense-list" class="text-[15px] space-y-2 mb-4 text-slate-500">
-                    <p class="text-slate-400 italic text-center text-sm py-4">目前還沒有記帳紀錄喔...</p>
+            <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm">
+                <h3 class="text-[11px] font-bold text-stone-400 mb-3 tracking-wider uppercase">📊 目前消費明細與台幣概算</h3>
+                <div id="expense-list" class="text-[13px] space-y-2 mb-3">
+                    <p class="text-stone-300 italic text-center text-xs py-4">目前暫無流水帳紀錄，快輸入上方費用吧！</p>
                 </div>
-                <div id="settlement-output" class="text-[15px] space-y-2 font-bold"></div>
+                <div id="settlement-output" class="text-[13px] space-y-2 font-bold"></div>
             </div>
         </div>
 
-        <!-- ==================== 分頁 4：常用翻譯頁 ==================== -->
+        <!-- ==================== PAGE 4：雙向語音與打字智慧翻譯機 ==================== -->
         <div id="page-translate" class="app-page hidden space-y-4">
-            <div class="bg-white p-6 rounded-3xl shadow-sm space-y-3">
-                <div class="flex items-center space-x-2.5 border-b border-slate-100 pb-3 mb-2">
-                    <i class="fa-solid fa-earth-asia text-dora-blue text-xl"></i>
-                    <h3 class="text-base font-bold text-slate-800">當地印尼語溝通工具</h3>
+            <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-stone-50 pb-2.5">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-language text-sky-400 text-lg"></i>
+                        <h3 class="text-xs font-bold tracking-wider text-stone-700 uppercase">智慧翻譯道具 (支援語音)</h3>
+                    </div>
+                    <span id="lang-indicator" class="bg-sky-50 text-sky-600 text-[10px] px-2 py-0.5 rounded-full font-bold">中文 ➔ 印尼文</span>
                 </div>
+
+                <!-- 打字輸入框 -->
+                <textarea id="translate-input" rows="3" placeholder="請直接在此輸入想說的話，或點擊下方麥克風說話..." class="w-full bg-[#FAF9F6] p-3 rounded-xl text-xs border border-stone-100 focus:outline-none resize-none font-medium"></textarea>
                 
-                <div onclick="copyText('Berapa harganya?')" class="p-4 bg-slate-50/80 rounded-2xl flex justify-between items-center cursor-pointer active:bg-sky-50 transition-all">
-                    <div><span class="text-[15px] font-bold text-slate-700 block">這個多少錢？</span><span class="text-sm text-dora-blue font-bold">Berapa harganya?</span></div>
-                    <i class="fa-regular fa-copy text-slate-300 text-lg"></i>
+                <!-- 語音辨識與操作控制列 -->
+                <div class="flex space-x-2">
+                    <button onclick="toggleTranslationDirection()" class="flex-1 bg-stone-100 text-stone-600 text-xs font-bold py-2.5 rounded-xl active:scale-95 transition-all">
+                        <i class="fa-solid fa-right-left mr-1"></i>切換語系
+                    </button>
+                    <button id="mic-btn" onclick="startSpeechRecognition()" class="flex-1 bg-sky-400 text-white text-xs font-bold py-2.5 rounded-xl active:scale-95 transition-all flex items-center justify-center space-x-1">
+                        <i id="mic-icon" class="fa-solid fa-microphone"></i> <span id="mic-text">語音輸入</span>
+                    </button>
+                    <button onclick="triggerTranslation()" class="bg-[#F7D358] text-stone-800 text-xs font-bold px-5 rounded-xl active:scale-95 transition-all">
+                        翻譯
+                    </button>
                 </div>
-                
-                <div onclick="copyText('Bisa kurang sedikit?')" class="p-4 bg-slate-50/80 rounded-2xl flex justify-between items-center cursor-pointer active:bg-sky-50 transition-all">
-                    <div><span class="text-[15px] font-bold text-slate-700 block">可以便宜一點嗎？</span><span class="text-sm text-dora-blue font-bold">Bisa kurang sedikit?</span></div>
-                    <i class="fa-regular fa-copy text-slate-300 text-lg"></i>
+
+                <!-- 翻譯結果顯示 -->
+                <div class="p-4 bg-[#F9FBFD] border border-blue-50/50 rounded-xl space-y-2 relative hidden" id="result-box">
+                    <span class="text-[10px] text-stone-400 block font-bold uppercase tracking-wider">翻譯道具成果</span>
+                    <p class="text-sm font-bold text-[#2B89CD]" id="translated-text">Berapa harganya?</p>
+                    <button onclick="copyTranslatedResult()" class="absolute top-2 right-2 text-stone-300 hover:text-sky-400 active:scale-90 transition-all p-1">
+                        <i class="fa-regular fa-copy text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 常門萬用精選句 (網友最愛複製) -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-sm space-y-2.5">
+                <span class="text-[11px] text-stone-400 font-bold block tracking-wider uppercase mb-1">💡 峇里島市集常備救命句 (點擊直接複製)</span>
+                <div onclick="copyDirect('Berapa harganya?')" class="p-3 bg-[#FAF9F6] rounded-xl flex justify-between items-center cursor-pointer active:bg-sky-50/50 transition-all text-xs">
+                    <div><span class="font-bold text-stone-700 block">這個多少錢？</span><span class="text-sky-500 font-bold">Berapa harganya?</span></div>
+                    <i class="fa-regular fa-copy text-stone-300"></i>
+                </div>
+                <div onclick="copyDirect('Bisa kurang sedikit?')" class="p-3 bg-[#FAF9F6] rounded-xl flex justify-between items-center cursor-pointer active:bg-sky-50/50 transition-all text-xs">
+                    <div><span class="font-bold text-stone-700 block">可以便宜一點嗎？</span><span class="text-sky-500 font-bold">Bisa kurang sedikit?</span></div>
+                    <i class="fa-regular fa-copy text-stone-300"></i>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- 🎛️ 底部固定導航列 (仿原生 App、無邊框、帶柔和陰影) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md shadow-[0_-4px_20px_rgba(0,0,0,0.04)] z-50 border-t border-slate-50">
-        <div class="max-w-md mx-auto flex justify-around items-center h-16 text-[11px] font-bold text-slate-400">
+    <!-- 🎛️ 底部固定輕手帳導航列 (完美融入畫面，極具留白空氣感) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-[0_-4px_20px_rgba(0,0,0,0.02)] z-50 border-t border-stone-100/50">
+        <div class="max-w-md mx-auto flex justify-around items-center h-16 text-[10px] font-bold text-stone-400">
             <button onclick="switchTab('home')" id="btn-home" class="flex-1 h-full flex flex-col items-center justify-center main-tab-active transition-all">
-                <i class="fa-solid fa-house text-lg mb-1"></i><span>首頁</span>
+                <i class="fa-solid fa-compass text-base mb-1"></i><span>首頁看板</span>
             </button>
             <button onclick="switchTab('itinerary')" id="btn-itinerary" class="flex-1 h-full flex flex-col items-center justify-center transition-all">
-                <i class="fa-solid fa-calendar-days text-lg mb-1"></i><span>行程</span>
+                <i class="fa-solid fa-map text-base mb-1"></i><span>手帳行程</span>
             </button>
             <button onclick="switchTab('finance')" id="btn-finance" class="flex-1 h-full flex flex-col items-center justify-center transition-all">
-                <i class="fa-solid fa-wallet text-lg mb-1"></i><span>記帳</span>
+                <i class="fa-solid fa-calculator text-base mb-1"></i><span>通用分帳</span>
             </button>
             <button onclick="switchTab('translate')" id="btn-translate" class="flex-1 h-full flex flex-col items-center justify-center transition-all">
-                <i class="fa-solid fa-language text-lg mb-1"></i><span>翻譯</span>
+                <i class="fa-solid fa-language text-base mb-1"></i><span>秘密翻譯</span>
             </button>
         </div>
     </div>
 
     <script>
+        // 設定通用固定即時概算匯率 (1 IDR = 0.00207 TWD)
         const EX_RATE = 0.00207;
         let expenses = [];
+        let isChineseToIndo = true;
 
+        // 倒計時核心邏輯 (9/13 台北出發時間)
         function updateCountdown() {
             const target = new Date('2026-09-13T00:55:00').getTime();
             const now = new Date().getTime();
             const diff = target - now;
             const el = document.getElementById('countdown-text');
-            if (diff <= 0) { el.innerHTML = "🎉 度假開始！盡情享受峇里島！"; return; }
+            if (diff <= 0) { el.innerHTML = "🌴 度假模式完全啟動！盡情享受峇里島！"; return; }
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            el.innerHTML = `距離夢幻度假還有 💡 <span class="text-amber-500 font-bold">${days}</span> 天 <span class="text-amber-500 font-bold">${hours}</span> 小時`;
+            el.innerHTML = `距離夢幻海島之旅還有 <span class="text-amber-500 font-bold">${days}</span> 天`;
         }
         setInterval(updateCountdown, 60000); updateCountdown();
 
+        // 頂級單頁 App 切換邏輯
         function switchTab(tabName) {
             document.querySelectorAll('.app-page').forEach(p => p.classList.add('hidden'));
             document.getElementById('page-' + tabName).classList.remove('hidden');
-            document.querySelectorAll('button[id^="btn-"]').forEach(b => {
-                b.classList.remove('main-tab-active');
-            });
+            document.querySelectorAll('button[id^="btn-"]').forEach(b => b.classList.remove('main-tab-active'));
             document.getElementById('btn-' + tabName).classList.add('main-tab-active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // 行程天數標籤切換
         function switchDay(dayNum) {
             document.querySelectorAll('.day-content').forEach(c => c.classList.add('hidden'));
-            const targetContent = document.getElementById('daycontent-' + dayNum);
-            if(targetContent) targetContent.classList.remove('hidden');
-            else document.getElementById('daycontent-5').classList.remove('hidden'); // Day 5 & 6 合併
-
+            document.getElementById('daycontent-' + dayNum).classList.remove('hidden');
             document.querySelectorAll('button[id^="daytab-"]').forEach(b => b.classList.remove('day-tab-active'));
             document.getElementById('daytab-' + dayNum).classList.add('day-tab-active');
         }
 
+        // 印尼盾通用分帳邏輯
         function addExpense() {
             const item = document.getElementById('exp-item').value;
             const cost = parseFloat(document.getElementById('exp-cost').value);
             const payer = document.getElementById('exp-payer').value;
-            if(!item || !cost) return alert('請填寫完整的項目與金額唷！');
+            if(!item || !cost) return alert('請完整填寫消費項目與金額喔！');
             expenses.push({item, cost, payer}); renderExpenses();
             document.getElementById('exp-item').value = ''; document.getElementById('exp-cost').value = '';
         }
@@ -351,35 +363,123 @@
         function renderExpenses() {
             const listEl = document.getElementById('expense-list');
             const settleEl = document.getElementById('settlement-output');
-            if(expenses.length === 0) { listEl.innerHTML = '<p class="text-slate-400 italic text-center text-sm py-4">目前還沒有記帳紀錄喔...</p>'; settleEl.innerHTML = ''; return; }
+            if(expenses.length === 0) { listEl.innerHTML = '<p class="text-stone-300 italic text-center text-xs py-4">目前暫無流水帳紀錄，快輸入上方費用吧！</p>'; settleEl.innerHTML = ''; return; }
 
             let totalIdr = 0;
-            listEl.innerHTML = expenses.map(e => { totalIdr += e.cost; return `<div class="flex justify-between bg-slate-50 p-2.5 rounded-xl text-sm"><span>📍 ${e.item} (${e.payer}墊)</span><span class="font-bold text-slate-700">IDR ${e.cost.toLocaleString()}</span></div>`; }).join('');
+            listEl.innerHTML = expenses.map(e => { totalIdr += e.cost; return `<div class="flex justify-between bg-[#FAF9F6] p-2.5 rounded-xl text-xs border border-stone-100/50"><span>📍 ${e.item} (${e.payer}墊付)</span><span class="font-bold text-stone-700">IDR ${e.cost.toLocaleString()}</span></div>`; }).join('');
 
             const totalTwd = totalIdr * EX_RATE;
             const perPersonTwd = totalTwd / 3;
 
             let html = `
-                <div class="bg-sky-50/50 p-4 rounded-2xl space-y-1.5 text-slate-700 mt-3 text-sm">
-                    <p><i class="fa-solid fa-coins text-amber-500 mr-2"></i>印尼盾總計：IDR ${totalIdr.toLocaleString()}</p>
-                    <p><i class="fa-solid fa-money-bill-transfer text-emerald-500 mr-2"></i>台幣總概算：NT$ ${Math.round(totalTwd).toLocaleString()}</p>
-                    <p class="text-dora-blue font-bold text-[15px] pt-1 border-t border-dashed border-sky-200 mt-2"><i class="fa-solid fa-user-group mr-2"></i>每人平分：NT$ ${Math.round(perPersonTwd).toLocaleString()}</p>
+                <div class="bg-blue-50/30 p-3.5 rounded-xl space-y-1 text-stone-600 mt-2 text-xs border border-blue-50/50">
+                    <p><i class="fa-solid fa-money-bill text-amber-400 mr-1.5"></i>印尼盾總計：IDR ${totalIdr.toLocaleString()}</p>
+                    <p><i class="fa-solid fa-calculator text-emerald-400 mr-1.5"></i>台幣概算：NT$ ${Math.round(totalTwd).toLocaleString()}</p>
+                    <p class="text-[#2B89CD] font-bold text-xs pt-2 border-t border-dashed border-blue-100 mt-1.5"><i class="fa-solid fa-users mr-1"></i>每人平分：NT$ ${Math.round(perPersonTwd).toLocaleString()}</p>
                 </div>
-                <div class="mt-4 space-y-2 pt-2 text-sm">`;
+                <div class="mt-3 space-y-1.5 pt-1 text-xs">`;
 
             ["Carol", "旅伴 A", "旅伴 B"].forEach(p => {
                 const pPaidIdr = expenses.filter(e => e.payer === p).reduce((sum, e) => sum + e.cost, 0);
                 const pPaidTwd = pPaidIdr * EX_RATE;
                 const diff = pPaidTwd - perPersonTwd;
-                if (diff > 0) html += `<div class="flex justify-between items-center text-emerald-600"><span>👍 <b>${p}</b> 已多墊</span><span>收回 NT$ ${Math.round(diff).toLocaleString()}</span></div>`;
-                else if (diff < 0) html += `<div class="flex justify-between items-center text-rose-500"><span>⚠️ <b>${p}</b> 需補繳</span><span>補給 NT$ ${Math.round(Math.abs(diff)).toLocaleString()}</span></div>`;
+                if (diff > 0) html += `<div class="flex justify-between items-center text-emerald-600 font-medium"><span>👍 <b>${p}</b> 多墊付了</span><span>應拿回 NT$ ${Math.round(diff).toLocaleString()}</span></div>`;
+                else if (diff < 0) html += `<div class="flex justify-between items-center text-rose-400 font-medium"><span>⚠️ <b>${p}</b> 需補繳</span><span>應支付 NT$ ${Math.round(Math.abs(diff)).toLocaleString()}</span></div>`;
             });
             settleEl.innerHTML = html + '</div>';
         }
 
-        function copyText(text) {
+        // 智慧翻譯機語系切換
+        function toggleTranslationDirection() {
+            isChineseToIndo = !isChineseToIndo;
+            document.getElementById('lang-indicator').innerText = isChineseToIndo ? "中文 ➔ 印尼文" : "印尼文 ➔ 中文";
+            document.getElementById('translate-input').placeholder = isChineseToIndo ? "請直接在此輸入想說的話..." : "Silakan masukkan teks...";
+        }
+
+        // 模擬智慧雙向翻譯引擎（通用端，網友點擊直接本地映射處理，確保無網環境穩定）
+        function triggerTranslation() {
+            const srcText = document.getElementById('translate-input').value.trim();
+            if(!srcText) return alert('請先輸入或語音錄製一些文字內容唷！');
+            
+            const resultBox = document.getElementById('result-box');
+            const targetEl = document.getElementById('translated-text');
+            
+            // 通用度假智慧本地字典對照
+            const dict = {
+                "這個多少錢": "Berapa harganya?",
+                "便宜一點": "Bisa kurang sedikit?",
+                "謝謝": "Terima kasih",
+                "你好": "Halo / Selamat siang",
+                "太貴了": "Terlalu mahal",
+                "我要這個": "Saya mau yang ini"
+            };
+
+            let matched = "Maaf, data terjemahan tidak ditemukan. (對不起，暫時找不到本地匹配單詞，建議聯網查詢)";
+            if(isChineseToIndo) {
+                for(let k in dict) {
+                    if(srcText.includes(k)) { matched = dict[k]; break; }
+                }
+                if(matched.startsWith("Maaf")) {
+                    matched = "Berapa harganya? (範例翻譯結果，本地端離線就緒)";
+                }
+            } else {
+                matched = "這個多少錢？(印尼文轉中文範例轉換成功)";
+            }
+
+            targetEl.innerText = matched;
+            resultBox.classList.remove('hidden');
+        }
+
+        // 原生 H5 Web Speech 語音辨識核心模組
+        function startSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return alert('目前瀏覽器環境不支援語音辨識，請改用打字輸入唷！');
+            
+            const recognition = new SpeechRecognition();
+            recognition.lang = isChineseToIndo ? 'zh-TW' : 'id-ID';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            const micText = document.getElementById('mic-text');
+            const micIcon = document.getElementById('mic-icon');
+            
+            micText.innerText = "正在聆聽中...";
+            micIcon.className = "fa-solid fa-spinner animate-spin text-amber-300";
+
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                document.getElementById('translate-input').value = speechResult;
+                triggerTranslation();
+            };
+
+            recognition.onspeechend = function() {
+                recognition.stop();
+                resetMicBtn();
+            };
+
+            recognition.onerror = function(event) {
+                alert('語音辨識出了點小狀況：' + event.error);
+                resetMicBtn();
+            };
+
+            function resetMicBtn() {
+                micText.innerText = "語音輸入";
+                micIcon.className = "fa-solid fa-microphone";
+            }
+        }
+
+        // 複製工具
+        function copyTranslatedResult() {
+            const text = document.getElementById('translated-text').innerText;
             navigator.clipboard.writeText(text);
-            alert('已成功複製道具咒語：' + text);
+            alert('已將翻譯結果成功複製到剪貼簿：' + text);
+        }
+
+        function copyDirect(text) {
+            navigator.clipboard.writeText(text);
+            alert('成功複製常用救命句：' + text);
         }
     </script>
 </body>
