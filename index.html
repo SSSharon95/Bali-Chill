@@ -4,67 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌿 Bali Chill - 你的巴里島旅行手帳</title>
-    <!-- 引入 Tailwind CSS 進行排版 -->
+    
+    <!-- 引入 Tailwind CSS 進行精準排版 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Alpine.js 處理切換分頁與互動邏輯 -->
+    <!-- 引入 Alpine.js 處理流暢的互動與四大功能切換 -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <!-- 引入日系可愛手寫感字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Kosugi+Maru&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         bali: {
-                            bg: '#F4ECE1',       // 手帳紙張溫潤米色
-                            card: '#FCF9F5',     // 卡片微黃乳白色
-                            primary: '#8BB2E9',  // 哆啦水彩藍
-                            accent: '#F9E3B4',   // 經典奶油黃
-                            text: '#4E3629',     // 手寫簽字筆深棕色
-                            mint: '#A1C7A9',     // 葉片清爽綠
-                            coral: '#EAA694'     // 櫻花粉橘
+                            bg: '#F2EBE1',       // 還原：設計圖的手帳溫潤米黃底色
+                            card: '#FCF9F5',     // 還原：內頁乳白色卡片
+                            primary: '#8BB2E9',  // 還原：多啦水彩藍
+                            accent: '#FCE7B2',   // 還原：經典溫暖奶油黃
+                            text: '#4E3629',     // 還原：手寫簽字筆深棕色
+                            mint: '#A6C9B0',     // 還原：打包清單標題綠
+                            coral: '#EAA694'     // 還原：倒數天數櫻花粉
                         }
                     },
-                    borderRadius: {
-                        'sketch': '255px 20px 225px 20px/20px 225px 20px 255px', // 神級手繪不規則圓角
-                        'tape': '4px 4px 4px 4px/15px 15px 15px 15px'
+                    fontFamily: {
+                        hand: ['Kosugi Maru', 'ZCOOL KuaiLe', 'cursive', 'sans-serif']
                     }
                 }
             }
         }
     </script>
     <style>
-        /* 精準還原手繪線條與紙張質感 */
-        .border-hand {
+        /* 嚴格還原設計圖的靈魂：手繪雙層筆觸邊框 */
+        .border-hand-main {
             border: 3px solid #4E3629;
+            box-shadow: 4px 4px 0px #4E3629;
+        }
+        .border-hand-sub {
+            border: 2px solid #4E3629;
         }
         .border-hand-dashed {
             border: 2px dashed #4E3629;
         }
-        /* 紙張陰影 */
-        .hand-shadow {
-            box-shadow: 4px 4px 0px #4E3629;
+        
+        /* 核心：透過不對稱 CSS 參數，強行將幾何形狀扭曲成「手繪不規則曲線」 */
+        .rounded-hand-sketch {
+            border-radius: 255px 20px 225px 20px/20px 225px 20px 255px;
         }
-        /* 手繪不規則圓角外框 */
-        .rounded-sketch-card {
-            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+        .rounded-hand-circle {
+            border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%;
         }
+        
+        /* 紙膠帶質感（Masking Tape） */
+        .masking-tape {
+            background: rgba(252, 231, 178, 0.7);
+            border-left: 2px dashed #4E3629;
+            border-right: 2px dashed #4E3629;
+        }
+        
+        /* 水彩輕微暈染點綴效果 */
+        .watercolor-splatter {
+            background-image: radial-gradient(circle, rgba(139,178,233,0.1) 10%, transparent 40%);
+        }
+        
+        /* 自訂滾動條（維持手寫感） */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #4E3629; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-bali-bg text-bali-text font-mono p-4 min-h-screen flex justify-center items-start">
+<body class="bg-bali-bg text-bali-text font-hand p-4 min-h-screen flex justify-center items-start watercolor-splatter">
 
-    <!-- App 容器：嚴格比照設計圖的手機版寬度與美感 -->
+    <!-- App 主容器：完美復刻設計圖手機 App 比例與手帳外框 -->
     <div x-data="{ 
-        activeTab: 'home', // home(首頁), itinerary(行程), map(地圖), expense(記帳/翻譯), mine(我的/貼士)
+        activeTab: 'home', 
         expenses: [
             { id: 1, title: 'Baked. Cafe 早餐', idr: 250000, people: 3, category: '餐飲' },
             { id: 2, title: 'Grab 到烏布聖猴森林', idr: 180000, people: 3, category: '交通' }
         ],
-        newTitle: '',
-        newIdr: '',
-        newPeople: 3,
-        newCategory: '餐飲',
-        translateText: '',
-        translateResult: '',
+        newTitle: '', newIdr: '', newPeople: 3, newCategory: '餐飲',
+        translateText: '', translateResult: '',
         checklist: [
             { text: '護照與印尼電子簽證 (e-VOA)', done: true },
             { text: '防曬乳與萬用插頭 (兩腳圓頭)', done: false },
@@ -72,9 +91,9 @@
             { text: '泳衣、短袖、薄外衣', done: false }
         ],
         spots: [
-            { name: 'Baked. Cafe', location: 'Canggu', time: '09:00', type: '咖啡廳', lat: -8.6531, lng: 115.1322, cost: 'Rp 80,000 - 150,000' },
+            { name: 'Baked. Cafe', location: 'Canggu', time: '09:00', type: '咖啡廳', lat: -8.6531, lng: 115.1322, cost: 'Rp 80k-150k' },
             { name: 'Taman Saraswati Temple', location: 'Ubud', time: '11:30', type: '景點', lat: -8.5194, lng: 115.2606, cost: '免費' },
-            { name: 'Crate Cafe', location: 'Ubud', time: '13:30', type: '咖啡廳', lat: -8.5162, lng: 115.2621, cost: 'Rp 60,000 - 120,000' }
+            { name: 'Crate Cafe', location: 'Ubud', time: '13:30', type: '咖啡廳', lat: -8.5162, lng: 115.2621, cost: 'Rp 60k-120k' }
         ],
         addExpense() {
             if (!this.newTitle || !this.newIdr) return;
@@ -82,103 +101,114 @@
             this.newTitle = ''; this.newIdr = '';
         },
         translate(type) {
-            this.translateResult = `[正在調用 ${type} 辨識...]\n翻譯結果：這道菜是印尼炒飯 (Nasi Goreng)，內含雞肉與沙嗲，是峇里島推薦必點！`;
+            this.translateResult = `[已啟用 ${type} 智慧辨識]\n✨ 翻譯：這是印尼炒飯 (Nasi Goreng)，內含雞肉與沙嗲，是峇里島推薦必點！`;
         },
         openGoogleMap(spot) {
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}&travelmode=driving`, '_blank');
         }
-    }" class="w-full max-w-md bg-bali-card border-hand rounded-sketch p-5 shadow-2xl relative pb-28">
+    }" class="w-full max-w-md bg-bali-card border-hand-main rounded-hand-sketch p-5 relative pb-28 min-h-[780px]">
 
         <!-- ==========================================
-             頁面 1：HOME (首頁 - 還原設計圖第一、五、八張卡片元素)
+             分頁 1：HOME (首頁 - 還原設計圖主視覺、拍立得與提示語)
              ========================================== -->
-        <div x-show="activeTab === 'home'" class="space-y-6">
-            <!-- 頂部拍立得手繪標題 -->
+        <div x-show="activeTab === 'home'" class="space-y-6 animate-fadeIn">
+            <!-- 頂部手繪標題與對話框 -->
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 class="text-4xl font-black tracking-wide text-bali-text flex items-center gap-1">
-                        Bali Chill <span class="text-xl">🌿</span>
+                    <h1 class="text-3xl font-black tracking-wider flex items-center gap-1">
+                        Bali Chill <span class="text-lg">🌿</span>
                     </h1>
-                    <p class="text-xs font-bold text-gray-500 mt-1">你的巴里島旅行手帳</p>
+                    <!-- 設計圖副標題 -->
+                    <div class="text-[11px] font-bold text-bali-text/60 border-b border-hand-dashed pb-1 mt-1">你的巴里島旅行手帳</div>
                 </div>
-                <!-- 右上角多啦頭像框 -->
-                <div class="w-14 h-14 bg-white border-hand rounded-full flex items-center justify-center text-2xl hand-shadow">🐱</div>
+                <!-- 多啦頭像圓框 -->
+                <div class="w-14 h-14 bg-white border-hand-sub rounded-full flex items-center justify-center text-3xl shadow-sm rounded-hand-circle">🐱</div>
             </div>
 
-            <!-- 今日巴里島天氣與倒數 (紙張便利貼樣式) -->
-            <div class="bg-white border-hand rounded-sketch-card p-4 relative hand-shadow">
-                <div class="absolute -top-3 left-1/3 w-24 h-6 bg-bali-accent/60 border-hand -rotate-2 rounded-tape flex items-center justify-center text-xs font-bold">Good Morning!</div>
+            <!-- 多啦A夢今日貼心問候對話框 -->
+            <div class="bg-white border-hand-sub rounded-hand-sketch p-3 relative text-xs font-bold bg-yellow-50/50">
+                <div class="absolute -top-2.5 left-4 px-2 py-0.5 bg-bali-primary text-white border-hand-sub text-[10px] rounded">多啦A夢提示</div>
+                <p class="mt-1 text-bali-text">"今天也是適合旅行的一天！別忘了防曬和多喝水喔！☀️"</p>
+            </div>
+
+            <!-- 天氣與倒數計時（還原設計圖核心便利貼組件） -->
+            <div class="bg-white border-hand-sub rounded-hand-sketch p-4 relative shadow-sm">
+                <!-- 手繪紙膠帶效果 -->
+                <div class="absolute -top-3 left-1/3 w-28 h-5 masking-tape text-center text-[10px] font-black tracking-widest text-bali-text/80 rounded-sm">TRAVEL PLANNER</div>
+                
                 <div class="flex justify-between items-center mt-2">
                     <div>
-                        <p class="text-sm font-bold">今天的巴里島也是 <span class="text-orange-400">29°C ☀️</span></p>
-                        <p class="text-[11px] text-gray-400 mt-0.5">紫外線極強，別忘了防曬和喝水喔！</p>
+                        <p class="text-xs text-gray-400">今天的巴里島是</p>
+                        <p class="text-xl font-black mt-0.5">29°C ☀️ <span class="text-xs text-orange-400 font-bold">晴朗</span></p>
                     </div>
                     <div class="text-right">
                         <p class="text-xs text-gray-400">距離旅行還有</p>
-                        <p class="text-3xl font-black text-bali-coral">84 <span class="text-xs font-bold">天</span></p>
+                        <p class="text-3xl font-black text-bali-coral tracking-tighter">84 <span class="text-xs font-bold text-bali-text">天</span></p>
                     </div>
                 </div>
             </div>
 
-            <!-- 熱門區域捷徑 (還原手繪插畫按鈕) -->
-            <div>
-                <p class="text-xs font-bold mb-2 text-gray-400">今天想去哪裡？</p>
+            <!-- 熱門捷徑快選 -->
+            <div class="space-y-2">
+                <p class="text-xs font-bold text-gray-400">今天想去哪裡？</p>
                 <div class="grid grid-cols-2 gap-3">
-                    <div @click="activeTab = 'itinerary'" class="bg-white p-3 border-hand rounded-sketch-card text-center cursor-pointer hover:bg-bali-accent/20 transition">
-                        <span class="text-2xl block">🏝️</span><span class="text-sm font-bold">Ubud</span>
+                    <div @click="activeTab = 'itinerary'" class="bg-white p-3 border-hand-sub rounded-hand-sketch text-center cursor-pointer hover:bg-bali-accent/20 transition">
+                        <span class="text-xl block">🌿</span><span class="text-xs font-black">Ubud (烏布)</span>
                     </div>
-                    <div @click="activeTab = 'itinerary'" class="bg-white p-3 border-hand rounded-sketch-card text-center cursor-pointer hover:bg-bali-accent/20 transition">
-                        <span class="text-2xl block">🏄‍♂️</span><span class="text-sm font-bold">Canggu</span>
+                    <div @click="activeTab = 'itinerary'" class="bg-white p-3 border-hand-sub rounded-hand-sketch text-center cursor-pointer hover:bg-bali-accent/20 transition">
+                        <span class="text-xl block">🏄‍♂️</span><span class="text-xs font-black">Canggu (長谷)</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 旅行日記拍立得區 (還原第六張圖) -->
-            <div class="bg-white p-3 border-hand rounded-sm shadow-md rotate-1">
-                <div class="w-full h-40 bg-bali-bg border-hand rounded-sm flex items-center justify-center overflow-hidden relative">
+            <!-- 旅行日記拍立得卡片（還原第六張圖的水彩插畫質感） -->
+            <div class="bg-white p-3 border-hand-sub shadow-md rotate-1 rounded-sm">
+                <div class="w-full h-36 bg-[#E6EFE9] border-hand-sub rounded-sm flex flex-col items-center justify-center relative overflow-hidden">
                     <span class="text-4xl">🌋</span>
-                    <div class="absolute bottom-2 right-2 bg-black/40 text-white text-[10px] px-1.5 py-0.5 rounded">Ubud Rice Terrace</div>
+                    <div class="absolute bottom-2 left-2 bg-white/80 border border-hand-sub text-[9px] px-1.5 py-0.5 rounded-sm">2026/01/18 日記</div>
                 </div>
-                <p class="text-xs font-bold mt-2 text-center italic">"今天烏布的梯田真的太美了！☀️"</p>
+                <p class="text-xs font-bold mt-2.5 text-center italic text-bali-text/80">"早上的庫塔海灘浪很大，椰子汁超好喝！"</p>
             </div>
         </div>
 
         <!-- ==========================================
-             頁面 2：ITINERARY (我的行程 - 還原設計圖第二張時間軸)
+             分頁 2：ITINERARY (我的行程 - 還原第二張圖時間軸)
              ========================================== -->
-        <div x-show="activeTab === 'itinerary'" class="space-y-4">
-            <div class="flex justify-between items-center border-b-2 border-hand pb-2">
-                <h2 class="text-xl font-black flex items-center gap-1">🗓️ 我的行程 </h2>
-                <span class="text-xs bg-bali-accent px-2 py-0.5 border-hand rounded-full font-bold">2026 / 01 / 18</span>
+        <div x-show="activeTab === 'itinerary'" class="space-y-4 animate-fadeIn">
+            <div class="flex justify-between items-center border-b-2 border-hand-sub pb-2">
+                <h2 class="text-lg font-black flex items-center gap-1">🗓️ 我的行程手帳</h2>
+                <span class="text-xs bg-bali-accent px-2.5 py-0.5 border-hand-sub rounded-full font-bold">Day 1 (01/18)</span>
             </div>
 
-            <!-- 日期切換橫幅 -->
-            <div class="flex gap-2 overflow-x-auto pb-2">
-                <button class="bg-bali-primary text-white border-hand px-3 py-1 rounded-sketch-card text-xs font-bold">18 日</button>
-                <button class="bg-white border-hand px-3 py-1 rounded-sketch-card text-xs font-bold text-gray-400">19 日</button>
-                <button class="bg-white border-hand px-3 py-1 rounded-sketch-card text-xs font-bold text-gray-400">20 日</button>
-                <button class="bg-white border-hand px-3 py-1 rounded-sketch-card text-xs font-bold text-gray-400">21 日</button>
+            <!-- 日期手寫標籤切換橫幅 -->
+            <div class="flex gap-2 overflow-x-auto pb-1">
+                <button class="bg-bali-primary text-white border-hand-sub px-3 py-1 rounded-hand-sketch text-xs font-black">18 日</button>
+                <button class="bg-white border-hand-sub px-3 py-1 rounded-hand-sketch text-xs font-bold text-gray-400">19 日</button>
+                <button class="bg-white border-hand-sub px-3 py-1 rounded-hand-sketch text-xs font-bold text-gray-400">20 日</button>
             </div>
 
-            <!-- 核心功能：點擊店名立即開啟導航與包車預估 -->
-            <div class="relative border-l-2 border-hand ml-4 pl-5 space-y-5 mt-4">
+            <!-- 核心功能：精美時間軸 + 點擊店名導航 -->
+            <div class="relative border-l-2 border-hand-sub ml-4 pl-5 space-y-5 mt-4">
                 <template x-for="spot in spots">
                     <div class="relative">
-                        <!-- 時間軸上的多啦鈴鐺/小圓點 -->
-                        <div class="absolute -left-[27px] top-1 w-4 h-4 bg-bali-accent rounded-full border-2 border-hand flex items-center justify-center text-[8px]">🔔</div>
+                        <!-- 時間軸上的多啦黃色小鈴鐺 -->
+                        <div class="absolute -left-[28px] top-1.5 w-4 h-4 bg-bali-accent rounded-full border-2 border-hand-sub flex items-center justify-center text-[9px] font-bold shadow-sm rounded-hand-circle">🔔</div>
                         
-                        <div class="bg-white p-3 border-hand rounded-sketch-card hand-shadow relative">
-                            <span class="text-xs font-bold text-bali-primary bg-blue-50 px-2 py-0.5 border-hand rounded-full" x-text="spot.time"></span>
-                            <!-- 點擊觸發 -->
-                            <h3 @click="openGoogleMap(spot)" class="font-black text-base text-blue-600 hover:underline cursor-pointer mt-1 flex items-center gap-1">
-                                <span x-text="spot.name"></span> 🗺️
-                            </h3>
-                            <p class="text-xs text-gray-500">區域：<span x-text="spot.location"></span> | 類型：<span x-text="spot.type"></span></p>
+                        <div class="bg-white p-3 border-hand-sub rounded-hand-sketch shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-black text-bali-primary bg-blue-50 px-2 py-0.5 border-hand-sub rounded-full" x-text="spot.time"></span>
+                                <span class="text-[9px] font-bold text-gray-400" x-text="spot.type"></span>
+                            </div>
                             
-                            <!-- 針對峇里島塞車痛點的提示 -->
-                            <div class="mt-2 border-t border-dashed border-gray-300 pt-1 flex justify-between items-center text-[11px]">
-                                <span class="text-red-400 font-bold">🚘 Grab/包車預估: ~45分鐘</span>
-                                <span class="text-gray-400" x-text="'均消: ' + spot.cost"></span>
+                            <!-- 點擊觸發 Google Maps 導航 -->
+                            <h3 @click="openGoogleMap(spot)" class="font-black text-base text-blue-600 hover:underline cursor-pointer mt-1.5 flex items-center gap-1">
+                                <span x-text="spot.name"></span> <span class="text-xs">🗺️</span>
+                            </h3>
+                            <p class="text-[11px] text-gray-400">區域：<span x-text="spot.location"></span> | 預估均消：<span x-text="spot.cost"></span></p>
+                            
+                            <!-- 峇里島塞車痛點車程預估提示 -->
+                            <div class="mt-2 border-t border-dashed border-gray-300 pt-1.5 text-[10px] text-red-400 font-bold flex items-center gap-1">
+                                🚘 交通提示：塞車路段，包車/Grab 預估需 45 分鐘
                             </div>
                         </div>
                     </div>
@@ -187,129 +217,136 @@
         </div>
 
         <!-- ==========================================
-             頁面 3：MAP (地圖探索 - 還原設計圖第三張)
+             分頁 3：MAP (手繪風地圖探索 - 還原第三張圖)
              ========================================== -->
-        <div x-show="activeTab === 'map'" class="space-y-4">
-            <h2 class="text-xl font-black border-b-2 border-hand pb-2">🗺️ 地圖探索</h2>
-            <!-- 模擬手繪風地圖插畫背景 -->
-            <div class="w-full h-80 bg-[#E3EFE5] border-hand rounded-sketch-card relative overflow-hidden flex flex-col items-center justify-center text-center p-4">
-                <div class="absolute top-2 right-2 w-10 h-10 bg-white border-hand rounded-full flex items-center justify-center font-bold text-sm">🧭</div>
+        <div x-show="activeTab === 'map'" class="space-y-4 animate-fadeIn">
+            <h2 class="text-lg font-black border-b-2 border-hand-sub pb-2">🗺️ 巴里島手繪地圖</h2>
+            <!-- 水彩感綠色島嶼背景 -->
+            <div class="w-full h-80 bg-[#E1EFE3] border-hand-sub rounded-hand-sketch relative overflow-hidden flex flex-col items-center justify-center shadow-inner">
+                <div class="absolute top-3 right-3 w-9 h-9 bg-white border-hand-sub rounded-full flex items-center justify-center font-bold text-xs rounded-hand-circle shadow-sm">🧭</div>
                 
-                <!-- 手繪地點標籤 -->
-                <div class="absolute top-1/4 left-1/4 bg-white px-2 py-1 border-hand rounded text-xs font-bold">Lovina 🐬</div>
-                <div class="absolute top-1/2 left-1/3 bg-bali-accent px-2 py-1 border-hand rounded text-xs font-bold animate-bounce">Ubud 🌿</div>
-                <div class="absolute bottom-1/4 right-1/4 bg-white px-2 py-1 border-hand rounded text-xs font-bold">Canggu 🏄‍♂️</div>
+                <!-- 地圖上的不規則景點標籤 -->
+                <div class="absolute top-1/4 left-1/4 bg-white px-2 py-0.5 border-hand-sub rounded text-[10px] font-black">Lovina 海豚 🐬</div>
+                <div class="absolute top-1/2 left-1/3 bg-bali-accent px-2.5 py-1 border-hand-sub rounded-hand-sketch text-xs font-black animate-bounce">Ubud 烏布 🌿</div>
+                <div class="absolute bottom-1/4 right-1/4 bg-white px-2 py-0.5 border-hand-sub rounded text-[10px] font-black">Canggu 長谷 🏄‍♂️</div>
 
-                <p class="text-xs font-bold text-bali-text/70 mt-20">手帳精確定位中...<br/>點擊上方行程中的店名可直接拉起 Google Maps 導航與即時路況！</p>
+                <p class="text-[11px] font-bold text-bali-text/60 mt-24 text-center px-4">提示：在「行程」頁面點擊任何店名，即可自動啟動外部分航導航並查詢 Grab 當前路況！</p>
             </div>
         </div>
 
         <!-- ==========================================
-             頁面 4：EXPENSE & TRANSLATE (記帳、分帳與即時翻譯)
+             分頁 4：EXPENSE & TRANSLATE (全新功能：記帳分帳與隨身翻譯)
              ========================================== -->
-        <div x-show="activeTab === 'expense'" class="space-y-6">
-            <!-- 功能 1: 印尼盾記帳與同行同伴分帳 -->
-            <div class="space-y-3">
-                <h2 class="text-xl font-black border-b-2 border-hand pb-1 flex items-center gap-1">💰 記帳與分帳系統</h2>
-                <div class="bg-white p-4 border-hand rounded-sketch-card space-y-3 shadow-sm">
+        <div x-show="activeTab === 'expense'" class="space-y-5 animate-fadeIn">
+            <!-- 1. 印尼盾手動記帳與同伴分帳 -->
+            <div class="space-y-2">
+                <h2 class="text-lg font-black border-b-2 border-hand-sub pb-1">💰 印尼盾記帳 / 同伴分帳</h2>
+                <div class="bg-white p-3.5 border-hand-sub rounded-hand-sketch space-y-3 shadow-sm">
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" placeholder="項目 (例: 烏布晚餐)" x-model="newTitle" class="p-2 border-2 border-hand rounded focus:outline-none text-sm bg-transparent" />
-                        <select x-model="newCategory" class="p-2 border-2 border-hand rounded text-sm bg-white">
+                        <input type="text" placeholder="消費項目" x-model="newTitle" class="p-2 border-2 border-hand-sub rounded text-xs bg-transparent focus:outline-none" />
+                        <select x-model="newCategory" class="p-2 border-2 border-hand-sub rounded text-xs bg-white">
                             <option>餐飲</option><option>交通</option><option>門票</option><option>購物</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="number" placeholder="金額 (印尼盾 Rp)" x-model="newIdr" class="p-2 border-2 border-hand rounded focus:outline-none text-sm" />
-                        <input type="number" placeholder="平分人數" x-model="newPeople" class="p-2 border-2 border-hand rounded focus:outline-none text-sm" />
+                        <input type="number" placeholder="印尼盾金額 (Rp)" x-model="newIdr" class="p-2 border-2 border-hand-sub rounded text-xs focus:outline-none" />
+                        <input type="number" placeholder="同行平分人數" x-model="newPeople" class="p-2 border-2 border-hand-sub rounded text-xs focus:outline-none" />
                     </div>
-                    <button @click="addExpense()" class="w-full bg-bali-accent py-2 border-2 border-hand rounded-sketch-card font-black hover:bg-yellow-200 text-sm transition">✍️ 記入旅行手帳</button>
+                    <button @click="addExpense()" class="w-full bg-bali-accent py-2 border-2 border-hand-sub rounded-hand-sketch font-black text-xs hover:bg-yellow-200 transition">✍️ 記入分帳明細</button>
                 </div>
 
-                <!-- 記帳明細列表 -->
-                <div class="space-y-2 max-h-44 overflow-y-auto pr-1">
+                <!-- 記帳歷史清單 -->
+                <div class="space-y-2 max-h-36 overflow-y-auto pr-1">
                     <template x-for="exp in expenses">
-                        <div class="bg-white p-2.5 border-2 border-hand rounded flex justify-between items-center text-xs">
+                        <div class="bg-white p-2.5 border-2 border-hand-sub rounded-lg flex justify-between items-center text-xs">
                             <div>
-                                <p class="font-bold text-sm" x-text="exp.title"></p>
-                                <p class="text-gray-400">總額: Rp <span x-text="exp.idr.toLocaleString()"></span> / <span x-text="exp.people"></span>人</p>
+                                <p class="font-black text-sm" x-text="exp.title"></p>
+                                <p class="text-gray-400 text-[10px]">總額: Rp <span x-text="exp.idr.toLocaleString()"></span> / <span x-text="exp.people"></span> 人</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-black text-red-400">每人 Rp <span x-text="Math.round(exp.idr / exp.people).toLocaleString()"></span></p>
-                                <p class="text-[10px] text-gray-400">約 TWD <span x-text="Math.round((exp.idr / exp.people) / 50)"></span></p>
+                                <p class="font-black text-red-400 text-xs">每人 Rp <span x-text="Math.round(exp.idr / exp.people).toLocaleString()"></span></p>
+                                <p class="text-[9px] text-gray-400">約 TWD <span x-text="Math.round((exp.idr / exp.people) / 50)"></span></p>
                             </div>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <!-- 功能 2: 實時語音/手動/拍照翻譯功能 -->
-            <div class="space-y-3 pt-2 border-t-2 border-dashed border-gray-300">
-                <h2 class="text-xl font-black flex items-center gap-1">🗣️ 菜單與場景隨身翻譯</h2>
-                <div class="bg-white p-3 border-hand rounded-sketch-card space-y-2">
-                    <textarea x-model="translateText" placeholder="看懂菜單不踩雷！輸入印尼文（例如：Nasi Goreng）或點擊下方功能..." class="w-full h-20 p-2 border-2 border-hand rounded text-xs focus:outline-none bg-transparent"></textarea>
+            <!-- 2. 當地菜單/場景隨身翻譯 -->
+            <div class="space-y-2 pt-2 border-t border-dashed border-gray-300">
+                <h2 class="text-lg font-black">🗣️ 餐廳菜單隨身翻譯官</h2>
+                <div class="bg-white p-3 border-hand-sub rounded-hand-sketch space-y-2 shadow-sm">
+                    <textarea x-model="translateText" placeholder="看不懂印尼文菜單？在此輸入或點選功能..." class="w-full h-16 p-2 border-2 border-hand-sub rounded text-xs focus:outline-none bg-transparent"></textarea>
                     
                     <div class="grid grid-cols-3 gap-1.5">
-                        <button @click="translate('手動輸入')" class="bg-bali-primary text-white py-1.5 border-2 border-hand rounded text-xs font-bold">⌨️ 手動翻譯</button>
-                        <button @click="translate('拍照 OCR')" class="bg-bali-accent py-1.5 border-2 border-hand rounded text-xs font-bold">📸 拍照看菜單</button>
-                        <button @click="translate('實時語音')" class="bg-green-100 py-1.5 border-2 border-hand rounded text-xs font-bold">🎙️ 語音對話</button>
+                        <button @click="translate('手動輸入')" class="bg-bali-primary text-white py-1 border-2 border-hand-sub rounded text-[10px] font-black">⌨️ 文字翻譯</button>
+                        <button @click="translate('相機拍照')" class="bg-bali-accent py-1 border-2 border-hand-sub rounded text-[10px] font-black">📸 拍照看菜單</button>
+                        <button @click="translate('現場語音')" class="bg-green-50 py-1 border-2 border-hand-sub rounded text-[10px] font-black">🎙️ 語音對話</button>
                     </div>
                     
-                    <div x-show="translateResult" class="bg-yellow-50 p-2.5 border-2 border-dashed border-hand rounded text-xs mt-2 whitespace-pre-line" x-text="translateResult"></div>
+                    <div x-show="translateResult" class="bg-yellow-50/70 p-2 border border-dashed border-hand-sub rounded text-[11px] mt-1 text-blue-800" x-text="translateResult"></div>
                 </div>
             </div>
         </div>
 
         <!-- ==========================================
-             頁面 5：MINE (旅行小貼士與行李清單 - 還原第七、八張圖)
+             分頁 5：MINE (旅行小貼士與行李清單 - 還原第七張圖)
              ========================================== -->
-        <div x-show="activeTab === 'mine'" class="space-y-4">
-            <h2 class="text-xl font-black border-b-2 border-hand pb-2">📝 旅行小貼士</h2>
+        <div x-show="activeTab === 'mine'" class="space-y-4 animate-fadeIn">
+            <h2 class="text-lg font-black border-b-2 border-hand-sub pb-2">📝 旅行實用小貼士</h2>
             
-            <!-- 行李打包 Checklist -->
-            <div class="bg-white p-4 border-hand rounded-sketch-card hand-shadow">
-                <h3 class="font-black text-sm mb-2 text-bali-mint flex items-center gap-1">🎒 打包清單 Checklist</h3>
+            <!-- 打包清單 Checklist -->
+            <div class="bg-white p-4 border-hand-sub rounded-hand-sketch shadow-sm">
+                <h3 class="font-black text-xs text-bali-mint mb-2 flex items-center gap-1">🎒 行李打包 Checklist</h3>
                 <div class="space-y-2">
                     <template x-for="item in checklist">
-                        <label class="flex items-center space-x-2 cursor-pointer text-xs">
-                            <input type="checkbox" x-model="item.done" class="w-4 h-4 accent-bali-primary" />
+                        <label class="flex items-center space-x-2 cursor-pointer text-xs font-bold">
+                            <input type="checkbox" x-model="item.done" class="w-3.5 h-3.5 accent-bali-primary border-hand-sub rounded-sm" />
                             <span :class="item.done ? 'line-through text-gray-400' : ''" x-text="item.text"></span>
                         </label>
                     </template>
                 </div>
             </div>
 
-            <!-- 峇里島當地須知 -->
-            <div class="bg-white p-4 border-hand rounded-sketch-card relative">
-                <h3 class="font-black text-sm text-bali-coral mb-1">💡 貼心小提醒</h3>
-                <p class="text-[11px] leading-relaxed text-gray-600">
-                    1. 峇里島塞車非常嚴重，包車或搭 Grab 請務必提早 30-40 分鐘出發。<br/>
-                    2. 換匯請去有「No Commission」防偽標誌的大型連鎖店，避免受騙。<br/>
-                    3. 電壓插頭為雙腳圓頭，記得帶轉接器。
+            <!-- 當地注意事項 -->
+            <div class="bg-white p-4 border-hand-sub rounded-hand-sketch shadow-sm relative">
+                <div class="absolute -top-2.5 right-4 px-2 py-0.5 bg-bali-coral text-white border-hand-sub text-[9px] rounded font-black">必看</div>
+                <h3 class="font-black text-xs text-bali-coral mb-1">💡 峇里島生存指南</h3>
+                <p class="text-[11px] leading-relaxed text-gray-500">
+                    1. 包車或搭 Grab 務必提早出發，路況極易塞車。<br/>
+                    2. 當地換匯請認明官方大型連鎖店，避免小店詐騙。<br/>
+                    3. 電壓插頭為雙腳圓頭，防蚊液要隨身攜帶。
                 </p>
             </div>
         </div>
 
         <!-- ==========================================
-             底部手繪固定導航欄 (精準比照設計圖五大 Icon 配置)
+             底部固定導航欄 (完美對應設計圖五大手繪圖標配置)
              ========================================== -->
-        <nav class="absolute bottom-4 left-5 right-5 bg-white border-hand rounded-sketch py-2 px-2 flex justify-between items-center shadow-lg z-50">
+        <nav class="absolute bottom-4 left-4 right-4 bg-white border-hand-sub rounded-hand-sketch py-2 px-1 flex justify-between items-center shadow-md z-50">
             <button @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">🏠</span><span class="text-[10px] font-bold">首頁</span>
+                <span class="text-xl">🏠</span><span class="text-[9px] font-black mt-0.5">首頁</span>
             </button>
             <button @click="activeTab = 'itinerary'" :class="activeTab === 'itinerary' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">🗓️</span><span class="text-[10px] font-bold">行程</span>
+                <span class="text-xl">🗓️</span><span class="text-[9px] font-black mt-0.5">行程</span>
             </button>
             <button @click="activeTab = 'map'" :class="activeTab === 'map' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">🗺️</span><span class="text-[10px] font-bold">地圖</span>
+                <span class="text-xl">🗺️</span><span class="text-[9px] font-black mt-0.5">地圖</span>
             </button>
             <button @click="activeTab = 'expense'" :class="activeTab === 'expense' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">💰</span><span class="text-[10px] font-bold">記帳翻譯</span>
+                <span class="text-xl">💰</span><span class="text-[9px] font-black mt-0.5">記帳翻譯</span>
             </button>
             <button @click="activeTab = 'mine'" :class="activeTab === 'mine' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">📝</span><span class="text-[10px] font-bold">貼士</span>
+                <span class="text-xl">📝</span><span class="text-[9px] font-black mt-0.5">貼士</span>
             </button>
         </nav>
 
     </div>
+
+    <!-- 簡單的動畫效果 -->
+    <style>
+        .animate-fadeIn { animation: fadeIn 0.3s ease-in-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </body>
 </html>
