@@ -3,350 +3,779 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 Bali Chill - 你的巴里島旅行手帳</title>
-    
-    <!-- 引入 Tailwind CSS 進行精準排版 -->
+    <title>Bali Trip 2026</title>
+    <!-- Tailwind v3 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Alpine.js 處理流暢的互動與四大功能切換 -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <!-- 引入日系可愛手寫感字體 -->
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Kosugi+Maru&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        bali: {
-                            bg: '#F2EBE1',       // 還原：設計圖的手帳溫潤米黃底色
-                            card: '#FCF9F5',     // 還原：內頁乳白色卡片
-                            primary: '#8BB2E9',  // 還原：多啦水彩藍
-                            accent: '#FCE7B2',   // 還原：經典溫暖奶油黃
-                            text: '#4E3629',     // 還原：手寫簽字筆深棕色
-                            mint: '#A6C9B0',     // 還原：打包清單標題綠
-                            coral: '#EAA694'     // 還原：倒數天數櫻花粉
-                        }
-                    },
-                    fontFamily: {
-                        hand: ['Kosugi Maru', 'ZCOOL KuaiLe', 'cursive', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Vue 3 CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.prod.js"></script>
+    <!-- Lucide Icons 图标库 CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google 內嵌字體：換成更有手帳圓潤感的 Klee One 或 Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* 嚴格還原設計圖的靈魂：手繪雙層筆觸邊框 */
-        .border-hand-main {
-            border: 3px solid #4E3629;
-            box-shadow: 4px 4px 0px #4E3629;
+        body {
+            font-family: 'Klee One', 'Noto Sans TC', sans-serif;
+            background-color: #F6F4EB; /* 致敬圖片的溫暖手帳米色 */
+            -webkit-font-smoothing: antialiased;
         }
-        .border-hand-sub {
-            border: 2px solid #4E3629;
-        }
-        .border-hand-dashed {
-            border: 2px dashed #4E3629;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 核心：透過不對稱 CSS 參數，強行將幾何形狀扭曲成「手繪不規則曲線」 */
-        .rounded-hand-sketch {
-            border-radius: 255px 20px 225px 20px/20px 225px 20px 255px;
+        /* 獨家打造手繪水彩風 CSS 特效 */
+        .journal-card {
+            background: #ffffff;
+            border: 2px solid #7DD3FC; /* 溫柔的手繪藍線框 */
+            border-radius: 24px;
+            box-shadow: 4px 4px 0px #BAE6FD; /* 手繪感硬陰影 */
         }
-        .rounded-hand-circle {
-            border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%;
+        .journal-tag {
+            border: 1.5px dashed #38BDF8;
+            background-color: #F0F9FF;
         }
-        
-        /* 紙膠帶質感（Masking Tape） */
-        .masking-tape {
-            background: rgba(252, 231, 178, 0.7);
-            border-left: 2px dashed #4E3629;
-            border-right: 2px dashed #4E3629;
+        .paper-tape {
+            position: relative;
         }
-        
-        /* 水彩輕微暈染點綴效果 */
-        .watercolor-splatter {
-            background-image: radial-gradient(circle, rgba(139,178,233,0.1) 10%, transparent 40%);
+        .paper-tape::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 60px;
+            height: 20px;
+            background: rgba(125, 211, 252, 0.4);
+            transform: rotate(-5deg);
         }
-        
-        /* 自訂滾動條（維持手寫感） */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #4E3629; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-bali-bg text-bali-text font-hand p-4 min-h-screen flex justify-center items-start watercolor-splatter">
+<body class="flex justify-center min-h-screen">
 
-    <!-- App 主容器：完美復刻設計圖手機 App 比例與手帳外框 -->
-    <div x-data="{ 
-        activeTab: 'home', 
-        expenses: [
-            { id: 1, title: 'Baked. Cafe 早餐', idr: 250000, people: 3, category: '餐飲' },
-            { id: 2, title: 'Grab 到烏布聖猴森林', idr: 180000, people: 3, category: '交通' }
-        ],
-        newTitle: '', newIdr: '', newPeople: 3, newCategory: '餐飲',
-        translateText: '', translateResult: '',
-        checklist: [
-            { text: '護照與印尼電子簽證 (e-VOA)', done: true },
-            { text: '防曬乳與萬用插頭 (兩腳圓頭)', done: false },
-            { text: '防蚊液 (峇里島必備)', done: false },
-            { text: '泳衣、短袖、薄外衣', done: false }
-        ],
-        spots: [
-            { name: 'Baked. Cafe', location: 'Canggu', time: '09:00', type: '咖啡廳', lat: -8.6531, lng: 115.1322, cost: 'Rp 80k-150k' },
-            { name: 'Taman Saraswati Temple', location: 'Ubud', time: '11:30', type: '景點', lat: -8.5194, lng: 115.2606, cost: '免費' },
-            { name: 'Crate Cafe', location: 'Ubud', time: '13:30', type: '咖啡廳', lat: -8.5162, lng: 115.2621, cost: 'Rp 60k-120k' }
-        ],
-        addExpense() {
-            if (!this.newTitle || !this.newIdr) return;
-            this.expenses.push({ id: Date.now(), title: this.newTitle, idr: parseFloat(this.newIdr), people: parseInt(this.newPeople), category: this.newCategory });
-            this.newTitle = ''; this.newIdr = '';
-        },
-        translate(type) {
-            this.translateResult = `[已啟用 ${type} 智慧辨識]\n✨ 翻譯：這是印尼炒飯 (Nasi Goreng)，內含雞肉與沙嗲，是峇里島推薦必點！`;
-        },
-        openGoogleMap(spot) {
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}&travelmode=driving`, '_blank');
-        }
-    }" class="w-full max-w-md bg-bali-card border-hand-main rounded-hand-sketch p-5 relative pb-28 min-h-[780px]">
-
-        <!-- ==========================================
-             分頁 1：HOME (首頁 - 還原設計圖主視覺、拍立得與提示語)
-             ========================================== -->
-        <div x-show="activeTab === 'home'" class="space-y-6 animate-fadeIn">
-            <!-- 頂部手繪標題與對話框 -->
-            <div class="flex justify-between items-start">
-                <div>
-                    <h1 class="text-3xl font-black tracking-wider flex items-center gap-1">
-                        Bali Chill <span class="text-lg">🌿</span>
-                    </h1>
-                    <!-- 設計圖副標題 -->
-                    <div class="text-[11px] font-bold text-bali-text/60 border-b border-hand-dashed pb-1 mt-1">你的巴里島旅行手帳</div>
-                </div>
-                <!-- 多啦頭像圓框 -->
-                <div class="w-14 h-14 bg-white border-hand-sub rounded-full flex items-center justify-center text-3xl shadow-sm rounded-hand-circle">🐱</div>
+    <!-- 手機 App 外殼容器 -->
+    <div id="app" class="w-full max-w-md bg-[#FBFBFA] min-h-screen shadow-xl relative flex flex-col overflow-x-hidden pb-28 border-x-4 border-[#BAE6FD]">
+        
+        <!-- 頁首 Banner：優化為手繪拍立得感外框 -->
+        <div class="relative w-full h-64 bg-[#BAE6FD] overflow-hidden flex flex-col p-4">
+            <div class="w-full h-full rounded-2xl overflow-hidden border-4 border-white shadow-md relative">
+                <img src="Bali Banner.png" alt="Bali Banner" class="w-full h-full object-cover block" @load="refreshIcons">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40"></div>
+            </div>
+            
+            <!-- 標題與日期：手繪感字體與排列 -->
+            <div class="absolute top-8 right-8 text-right text-slate-800 drop-shadow-sm">
+                <h1 class="text-3xl font-bold tracking-wider text-[#0369A1] style-font">Bali Chill 🌸</h1>
+                <p class="text-xs font-bold bg-white/80 text-[#0369A1] px-2 py-0.5 rounded-full inline-block mt-1">2026 / 09.13 - 09.18</p>
             </div>
 
-            <!-- 多啦A夢今日貼心問候對話框 -->
-            <div class="bg-white border-hand-sub rounded-hand-sketch p-3 relative text-xs font-bold bg-yellow-50/50">
-                <div class="absolute -top-2.5 left-4 px-2 py-0.5 bg-bali-primary text-white border-hand-sub text-[10px] rounded">多啦A夢提示</div>
-                <p class="mt-1 text-bali-text">"今天也是適合旅行的一天！別忘了防曬和多喝水喔！☀️"</p>
-            </div>
-
-            <!-- 天氣與倒數計時（還原設計圖核心便利貼組件） -->
-            <div class="bg-white border-hand-sub rounded-hand-sketch p-4 relative shadow-sm">
-                <!-- 手繪紙膠帶效果 -->
-                <div class="absolute -top-3 left-1/3 w-28 h-5 masking-tape text-center text-[10px] font-black tracking-widest text-bali-text/80 rounded-sm">TRAVEL PLANNER</div>
-                
-                <div class="flex justify-between items-center mt-2">
-                    <div>
-                        <p class="text-xs text-gray-400">今天的巴里島是</p>
-                        <p class="text-xl font-black mt-0.5">29°C ☀️ <span class="text-xs text-orange-400 font-bold">晴朗</span></p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xs text-gray-400">距離旅行還有</p>
-                        <p class="text-3xl font-black text-bali-coral tracking-tighter">84 <span class="text-xs font-bold text-bali-text">天</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 熱門捷徑快選 -->
-            <div class="space-y-2">
-                <p class="text-xs font-bold text-gray-400">今天想去哪裡？</p>
-                <div class="grid grid-cols-2 gap-3">
-                    <div @click="activeTab = 'itinerary'" class="bg-white p-3 border-hand-sub rounded-hand-sketch text-center cursor-pointer hover:bg-bali-accent/20 transition">
-                        <span class="text-xl block">🌿</span><span class="text-xs font-black">Ubud (烏布)</span>
-                    </div>
-                    <div @click="activeTab = 'itinerary'" class="bg-white p-3 border-hand-sub rounded-hand-sketch text-center cursor-pointer hover:bg-bali-accent/20 transition">
-                        <span class="text-xl block">🏄‍♂️</span><span class="text-xs font-black">Canggu (長谷)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 旅行日記拍立得卡片（還原第六張圖的水彩插畫質感） -->
-            <div class="bg-white p-3 border-hand-sub shadow-md rotate-1 rounded-sm">
-                <div class="w-full h-36 bg-[#E6EFE9] border-hand-sub rounded-sm flex flex-col items-center justify-center relative overflow-hidden">
-                    <span class="text-4xl">🌋</span>
-                    <div class="absolute bottom-2 left-2 bg-white/80 border border-hand-sub text-[9px] px-1.5 py-0.5 rounded-sm">2026/01/18 日記</div>
-                </div>
-                <p class="text-xs font-bold mt-2.5 text-center italic text-bali-text/80">"早上的庫塔海灘浪很大，椰子汁超好喝！"</p>
+            <!-- 功能分頁 Tab：改為圖片中的圓角手繪按鈕風格 -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex bg-white/90 backdrop-blur-sm rounded-2xl p-1.5 shadow-lg border-2 border-[#7DD3FC] space-x-1 z-30 w-[90%] justify-around">
+                <button @click="changeTab('itinerary')" :class="{'bg-[#38BDF8] text-white shadow-sm': currentTab === 'itinerary', 'text-slate-600': currentTab !== 'itinerary'}" class="flex-1 py-2 rounded-xl transition-all text-xs font-bold flex flex-col items-center">
+                    <i data-lucide="map-pin" class="w-5 h-5 mb-0.5"></i> 行程
+                </button>
+                <button @click="changeTab('info')" :class="{'bg-[#38BDF8] text-white shadow-sm': currentTab === 'info', 'text-slate-600': currentTab !== 'info'}" class="flex-1 py-2 rounded-xl transition-all text-xs font-bold flex flex-col items-center">
+                    <i data-lucide="info" class="w-5 h-5 mb-0.5"></i> 資訊/翻譯
+                </button>
+                <button @click="changeTab('checklist')" :class="{'bg-[#38BDF8] text-white shadow-sm': currentTab === 'checklist', 'text-slate-600': currentTab !== 'checklist'}" class="flex-1 py-2 rounded-xl transition-all text-xs font-bold flex flex-col items-center">
+                    <i data-lucide="check-square" class="w-5 h-5 mb-0.5"></i> 打包
+                </button>
+                <button @click="changeTab('expenses')" :class="{'bg-[#38BDF8] text-white shadow-sm': currentTab === 'expenses', 'text-slate-600': currentTab !== 'expenses'}" class="flex-1 py-2 rounded-xl transition-all text-xs font-bold flex flex-col items-center">
+                    <i data-lucide="wallet" class="w-5 h-5 mb-0.5"></i> 記帳
+                </button>
             </div>
         </div>
 
-        <!-- ==========================================
-             分頁 2：ITINERARY (我的行程 - 還原第二張圖時間軸)
-             ========================================== -->
-        <div x-show="activeTab === 'itinerary'" class="space-y-4 animate-fadeIn">
-            <div class="flex justify-between items-center border-b-2 border-hand-sub pb-2">
-                <h2 class="text-lg font-black flex items-center gap-1">🗓️ 我的行程手帳</h2>
-                <span class="text-xs bg-bali-accent px-2.5 py-0.5 border-hand-sub rounded-full font-bold">Day 1 (01/18)</span>
-            </div>
+        <!-- 主內容區域 -->
+        <div class="relative bg-[#FBFBFA] px-4 flex-1 z-10 pt-2">
 
-            <!-- 日期手寫標籤切換橫幅 -->
-            <div class="flex gap-2 overflow-x-auto pb-1">
-                <button class="bg-bali-primary text-white border-hand-sub px-3 py-1 rounded-hand-sketch text-xs font-black">18 日</button>
-                <button class="bg-white border-hand-sub px-3 py-1 rounded-hand-sketch text-xs font-bold text-gray-400">19 日</button>
-                <button class="bg-white border-hand-sub px-3 py-1 rounded-hand-sketch text-xs font-bold text-gray-400">20 日</button>
-            </div>
+            <!-- ==================== 1. 每日行程表 ==================== -->
+            <div v-if="currentTab === 'itinerary'" class="space-y-4">
+                <!-- 天氣資訊卡片：手帳化 -->
+                <div class="journal-card p-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="p-2 bg-amber-50 rounded-full border border-amber-200">
+                            <i data-lucide="sun" class="w-8 h-8 text-amber-500 animate-spin-slow"></i>
+                        </div>
+                        <div>
+                            <div class="text-base font-bold text-slate-800">今天也是適合旅行的一天！</div>
+                            <div class="text-xs text-slate-500 mt-0.5">峇里島 庫塔 · 體感 32°C</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-[#0284C7]">29°C</div>
+                    </div>
+                </div>
 
-            <!-- 核心功能：精美時間軸 + 點擊店名導航 -->
-            <div class="relative border-l-2 border-hand-sub ml-4 pl-5 space-y-5 mt-4">
-                <template x-for="spot in spots">
-                    <div class="relative">
-                        <!-- 時間軸上的多啦黃色小鈴鐺 -->
-                        <div class="absolute -left-[28px] top-1.5 w-4 h-4 bg-bali-accent rounded-full border-2 border-hand-sub flex items-center justify-center text-[9px] font-bold shadow-sm rounded-hand-circle">🔔</div>
-                        
-                        <div class="bg-white p-3 border-hand-sub rounded-hand-sketch shadow-sm hover:shadow-md transition">
-                            <div class="flex justify-between items-center">
-                                <span class="text-[10px] font-black text-bali-primary bg-blue-50 px-2 py-0.5 border-hand-sub rounded-full" x-text="spot.time"></span>
-                                <span class="text-[9px] font-bold text-gray-400" x-text="spot.type"></span>
+                <!-- 橫向滑動日期選單 -->
+                <div class="flex space-x-3 overflow-x-auto pb-2 no-scrollbar snap-x">
+                    <button v-for="day in days" :key="day.id" @click="selectedDay = day.id" 
+                        :class="{'bg-[#38BDF8] text-white shadow-sm border-[#0284C7] font-bold scale-105': selectedDay === day.id, 'bg-white text-slate-600 border-[#BAE6FD]': selectedDay !== day.id}"
+                        class="flex flex-col items-center justify-center min-w-[68px] h-[78px] rounded-2xl transition-all duration-200 snap-center border-2">
+                        <span class="text-[10px] uppercase opacity-80 tracking-wider">{{ day.weekday }}</span>
+                        <span class="text-lg font-bold mt-0.5">{{ day.date }}</span>
+                    </button>
+                </div>
+
+                <!-- 行程列表 -->
+                <div class="mt-2 space-y-5">
+                    <div v-if="filteredItinerary.length === 0" class="text-center py-16 text-slate-400 text-sm">
+                        <i data-lucide="calendar-plus" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+                        今天空空如也，到處逛逛吧！
+                    </div>
+
+                    <div v-for="(item, index) in filteredItinerary" :key="item.id" class="space-y-1">
+                        <!-- 交通提示線 -->
+                        <div v-if="item.transitTime" class="flex items-center space-x-2 pl-6 my-2 text-xs font-medium text-slate-500">
+                            <i :data-lucide="item.transportIcon || 'car'" class="w-4 h-4 text-[#38BDF8]"></i>
+                            <span class="bg-[#F0F9FF] border border-[#BAE6FD] px-2 py-0.5 rounded-full text-[11px] text-slate-600">{{ item.transitTime }} ({{ item.transportMethod }})</span>
+                        </div>
+
+                        <!-- 飛機航班樣式（改為可愛風深藍卡片） -->
+                        <div v-if="item.type === '航班'" class="bg-gradient-to-br from-[#0284C7] to-[#1E3A8A] text-white rounded-2xl p-5 shadow-sm relative border-2 border-white">
+                            <div class="flex justify-between items-center border-b border-white/20 pb-2 mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="plane" class="w-5 h-5"></i>
+                                    <span class="text-sm font-bold tracking-wider">{{ item.name }}</span>
+                                </div>
+                                <button @click="openEditItinerary(item)" class="text-xs font-bold text-white/80 bg-white/20 px-3 py-1 rounded-xl">編輯</button>
                             </div>
-                            
-                            <!-- 點擊觸發 Google Maps 導航 -->
-                            <h3 @click="openGoogleMap(spot)" class="font-black text-base text-blue-600 hover:underline cursor-pointer mt-1.5 flex items-center gap-1">
-                                <span x-text="spot.name"></span> <span class="text-xs">🗺️</span>
-                            </h3>
-                            <p class="text-[11px] text-gray-400">區域：<span x-text="spot.location"></span> | 預估均消：<span x-text="spot.cost"></span></p>
-                            
-                            <!-- 峇里島塞車痛點車程預估提示 -->
-                            <div class="mt-2 border-t border-dashed border-gray-300 pt-1.5 text-[10px] text-red-400 font-bold flex items-center gap-1">
-                                🚘 交通提示：塞車路段，包車/Grab 預估需 45 分鐘
+                            <div class="text-xs space-y-1.5 opacity-95 leading-relaxed">
+                                <p v-if="item.hours" class="text-sm font-medium"><span class="opacity-70">時間：</span>{{ item.hours }}</p>
+                                <p v-if="item.notes" class="mt-2 bg-black/15 p-3 rounded-xl text-xs whitespace-pre-line tracking-wide">{{ item.notes }}</p>
+                            </div>
+                        </div>
+
+                        <!-- 標準手帳行程卡片 -->
+                        <div v-else class="journal-card p-4.5 flex items-start space-x-3 relative paper-tape">
+                            <div class="flex-1 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full journal-tag text-[#0369A1]">
+                                        ✏️ {{ item.type }}
+                                    </span>
+                                    <span class="text-xs font-bold text-[#38BDF8] bg-[#F0F9FF] px-2 py-0.5 rounded-md">{{ item.time || '未定時' }}</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base leading-snug">🍛 {{ item.name }}</h3>
+                                <p v-if="item.hours" class="text-xs text-slate-500 flex items-center"><i data-lucide="clock" class="w-4 h-4 mr-1.5 text-slate-400"></i>{{ item.hours }}</p>
+                                <p v-if="item.ticket" class="text-xs text-amber-700 font-bold flex items-center bg-amber-50 p-1.5 rounded-lg border border-amber-100 w-fit"><i data-lucide="ticket" class="w-4 h-4 mr-1.5 text-amber-600"></i>預估花費: {{ item.ticket }}</p>
+                                <p v-if="item.notes" class="text-xs text-slate-600 bg-slate-50 rounded-xl p-3 mt-2 border-l-4 border-[#38BDF8] whitespace-pre-line leading-relaxed">{{ item.notes }}</p>
+                                
+                                <div class="mt-3 pt-1 flex items-center space-x-4">
+                                    <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.name)" target="_blank" 
+                                       class="inline-flex items-center text-xs bg-[#F0F9FF] text-[#0284C7] px-4 py-1.5 rounded-xl font-bold border border-[#BAE6FD] hover:bg-blue-100">
+                                        <i data-lucide="navigation" class="w-3.5 h-3.5 mr-1.5"></i>地圖導航
+                                    </a>
+                                    <button @click="openEditItinerary(item)" class="text-xs font-bold text-slate-400 hover:text-slate-600 px-2 py-1.5">編輯項目</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </template>
-            </div>
-        </div>
+                </div>
 
-        <!-- ==========================================
-             分頁 3：MAP (手繪風地圖探索 - 還原第三張圖)
-             ========================================== -->
-        <div x-show="activeTab === 'map'" class="space-y-4 animate-fadeIn">
-            <h2 class="text-lg font-black border-b-2 border-hand-sub pb-2">🗺️ 巴里島手繪地圖</h2>
-            <!-- 水彩感綠色島嶼背景 -->
-            <div class="w-full h-80 bg-[#E1EFE3] border-hand-sub rounded-hand-sketch relative overflow-hidden flex flex-col items-center justify-center shadow-inner">
-                <div class="absolute top-3 right-3 w-9 h-9 bg-white border-hand-sub rounded-full flex items-center justify-center font-bold text-xs rounded-hand-circle shadow-sm">🧭</div>
+                <!-- 新增行程按鈕：手繪圓形鈕 -->
+                <button @click="openAddItineraryModal" class="fixed bottom-6 right-6 bg-[#38BDF8] text-white p-4 rounded-full shadow-lg z-40 hover:scale-105 border-4 border-white transition-all">
+                    <i data-lucide="plus" class="w-7 h-7"></i>
+                </button>
+            </div>
+
+            <!-- ==================== 2. 資訊中心 & 翻譯工具（全新大升級） ==================== -->
+            <div v-if="currentTab === 'info'" class="space-y-4">
                 
-                <!-- 地圖上的不規則景點標籤 -->
-                <div class="absolute top-1/4 left-1/4 bg-white px-2 py-0.5 border-hand-sub rounded text-[10px] font-black">Lovina 海豚 🐬</div>
-                <div class="absolute top-1/2 left-1/3 bg-bali-accent px-2.5 py-1 border-hand-sub rounded-hand-sketch text-xs font-black animate-bounce">Ubud 烏布 🌿</div>
-                <div class="absolute bottom-1/4 right-1/4 bg-white px-2 py-0.5 border-hand-sub rounded text-[10px] font-black">Canggu 長谷 🏄‍♂️</div>
+                <!-- 🆕 新增：手帳風即時旅遊翻譯工具 -->
+                <div class="journal-card p-4.5">
+                    <h3 class="font-bold text-base text-slate-800 mb-3.5 flex items-center">
+                        <i data-lucide="languages" class="w-5 h-5 mr-2 text-[#38BDF8]"></i>🇮🇩 隨身旅遊印尼語翻譯
+                    </h3>
+                    
+                    <!-- 輸入框換算 -->
+                    <div class="space-y-3">
+                        <div>
+                            <input type="text" v-model="translateInput" @input="searchTranslation" class="w-full bg-slate-50 text-slate-800 font-medium rounded-xl p-3 text-sm border-2 border-[#BAE6FD] focus:outline-none focus:border-[#38BDF8]" placeholder="輸入中文或關鍵字快速搜尋... (如: 謝謝)">
+                        </div>
+                        
+                        <!-- 搜尋或推薦結果 -->
+                        <div class="bg-[#F0F9FF] border border-[#BAE6FD] rounded-xl p-3 space-y-2" v-if="activeTranslations.length > 0">
+                            <div v-for="t in activeTranslations" :key="t.ind" class="flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-100 shadow-sm">
+                                <div>
+                                    <div class="text-xs text-slate-400 font-bold">中文：{{ t.chn }}</div>
+                                    <div class="text-sm font-bold text-slate-800 mt-0.5">🇮🇩 {{ t.ind }}</div>
+                                    <div class="text-[11px] text-blue-600 font-mono mt-0.5">讀音：/ {{ t.pron }} /</div>
+                                </div>
+                                <button @click="copyText(t.ind)" class="text-xs font-bold text-[#0284C7] bg-[#E0F2FE] px-2.5 py-1.5 rounded-lg border border-blue-200">
+                                    複製
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                <p class="text-[11px] font-bold text-bali-text/60 mt-24 text-center px-4">提示：在「行程」頁面點擊任何店名，即可自動啟動外部分航導航並查詢 Grab 當前路況！</p>
+                    <!-- 常用旅遊快捷點選指南 -->
+                    <div class="mt-4">
+                        <span class="text-xs font-bold text-slate-400 block mb-2">💡 常用場景點擊直接查：</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button v-for="phrase in commonPhrases" :key="phrase.chn" @click="setTranslateInput(phrase.chn)" class="text-xs font-medium bg-white border border-[#BAE6FD] px-2.5 py-1.5 rounded-xl hover:bg-blue-50 text-slate-700">
+                                {{ phrase.chn }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 匯率換算 -->
+                <div class="journal-card p-4.5">
+                    <h3 class="font-bold text-base text-slate-800 mb-3.5 flex items-center"><i data-lucide="refresh-cw" class="w-5 h-5 mr-2 text-[#38BDF8]"></i>即時匯率換算 (IDR ➡️ TWD)</h3>
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="text-xs text-slate-400 font-bold block mb-1">輸入印尼盾 (IDR)</label>
+                            <input type="number" v-model="exchangeIdr" class="w-full bg-slate-50 font-mono font-bold rounded-xl p-2.5 text-base border-2 border-[#BAE6FD] focus:outline-none" placeholder="100,000">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 font-bold block mb-1">換算台幣 (約0.00215)</label>
+                            <div class="w-full bg-blue-50 text-[#0284C7] font-mono font-bold rounded-xl p-2.5 text-base border-2 border-dashed border-[#38BDF8]">
+                                NT$ {{ computedTwd }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 航班快訊與機場捷徑 -->
+                <div class="journal-card p-4.5">
+                    <h3 class="font-bold text-base text-slate-800 mb-4 flex items-center"><i data-lucide="plane-takeoff" class="w-5 h-5 mr-2 text-[#38BDF8]"></i>航班與機場航廈詳細安排</h3>
+                    <div class="space-y-5">
+                        <!-- 去程段 1 -->
+                        <div class="border-l-4 border-blue-400 pl-4 space-y-2 relative">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-blue-600 text-sm">去程段 1 · 9/13 (日)</span>
+                                <span class="bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded font-bold text-xs">第 1 航廈</span>
+                            </div>
+                            <div class="text-sm text-slate-800 font-medium space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <p class="flex justify-between"><span>🛫 桃園機場 (TPE)</span> <span class="font-mono font-bold text-slate-900">00:55 出發</span></p>
+                                <p class="flex justify-between text-slate-500 border-b pb-1.5 mb-1.5"><span>🛬 新加坡 (SIN)</span> <span class="font-mono font-bold text-slate-700">05:20 抵達</span></p>
+                                <p class="text-xs font-bold text-indigo-600 flex items-center"><i data-lucide="tag" class="w-3.5 h-3.5 mr-1"></i>酷航 TR875</p>
+                            </div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=桃園國際機場第一航廈" target="_blank" class="inline-flex items-center text-xs font-bold bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg border border-blue-100/50 hover:underline">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1"></i>導航至桃園 T1 捷徑
+                            </a>
+                        </div>
+                        
+                        <!-- 去程段 2 -->
+                        <div class="border-l-4 border-teal-400 pl-4 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-teal-600 text-sm">去程段 2 · 9/13 (日)</span>
+                                <span class="bg-teal-100 text-teal-700 px-2.5 py-0.5 rounded font-bold text-xs">國際航廈</span>
+                            </div>
+                            <div class="text-sm text-slate-800 font-medium space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <p class="flex justify-between"><span>🛫 新加坡 (SIN)</span> <span class="font-mono font-bold text-slate-900">07:30 出發</span></p>
+                                <p class="flex justify-between text-slate-500 border-b pb-1.5 mb-1.5"><span>🛬 峇里島機場 (DPS)</span> <span class="font-mono font-bold text-slate-700">10:20 抵達</span></p>
+                                <p class="text-xs font-bold text-indigo-600 flex items-center"><i data-lucide="tag" class="w-3.5 h-3.5 mr-1"></i>酷航 TR280</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 回程段 -->
+                        <div class="border-l-4 border-orange-400 pl-4 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-orange-600 text-sm">回程段 · 9/18 (五)</span>
+                                <span class="bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded font-bold text-xs">國際航廈</span>
+                            </div>
+                            <div class="text-sm text-slate-800 font-medium space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <p class="flex justify-between"><span>🛫 峇里島機場 (DPS)</span> <span class="font-mono font-bold text-slate-900">15:55 出發</span></p>
+                                <p class="flex justify-between text-slate-500 border-b pb-1.5 mb-1.5"><span>🛬 桃園機場 (TPE)</span> <span class="font-mono font-bold text-slate-700">21:20 抵達</span></p>
+                                <p class="text-xs font-bold text-indigo-600 flex items-center"><i data-lucide="tag" class="w-3.5 h-3.5 mr-1"></i>中華航 CI772</p>
+                            </div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Ngurah+Rai+International+Airport" target="_blank" class="inline-flex items-center text-xs font-bold bg-orange-50 text-orange-600 px-3 py-1.5 rounded-lg border border-orange-100/50 hover:underline">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1"></i>導航至峇里島機場捷徑
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 住宿飯店 -->
+                <div class="journal-card p-4.5">
+                    <h3 class="font-bold text-base text-slate-800 mb-3.5 flex items-center"><i data-lucide="hotel" class="w-5 h-5 mr-2 text-[#38BDF8]"></i>下榻酒店群</h3>
+                    <div class="space-y-4 text-sm">
+                        <div class="pb-3 border-b border-slate-100 space-y-1">
+                            <div class="flex justify-between font-bold text-slate-800">
+                                <span class="max-w-[70%]">Discovery Kartika Plaza Hotel</span>
+                                <span class="text-blue-600 font-mono text-xs bg-blue-50 px-2 py-0.5 rounded">9/13-9/16</span>
+                            </div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Discovery+Kartika+Plaza+Hotel" target="_blank" class="text-xs text-blue-500 font-bold flex items-center pt-1"><i data-lucide="map" class="w-3.5 h-3.5 mr-1"></i>開啟地圖導航</a>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between font-bold text-slate-800">
+                                <span class="max-w-[70%]">The Vira Bali Boutique Hotel & Suite</span>
+                                <span class="text-blue-600 font-mono text-xs bg-blue-50 px-2 py-0.5 rounded">9/16-9/18</span>
+                            </div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=The+Vira+Bali+Boutique+Hotel+Suite" target="_blank" class="text-xs text-blue-500 font-bold flex items-center pt-1"><i data-lucide="map" class="w-3.5 h-3.5 mr-1"></i>開啟地圖導航</a>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- ==================== 3. 行李清單 Checklist ==================== -->
+            <div v-if="currentTab === 'checklist'" class="space-y-4">
+                <div class="journal-card p-4.5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-base text-slate-800 flex items-center">
+                            <i data-lucide="check-square" class="w-5 h-5 mr-2 text-[#38BDF8]"></i>行李打包 Check List
+                        </h3>
+                        <span class="text-xs font-bold journal-tag text-[#0284C7] px-2.5 py-1 rounded-full">
+                            進度: {{ checkedCount }}/{{ checklists.length }}
+                        </span>
+                    </div>
+
+                    <!-- 快速新增行李項 -->
+                    <div class="flex space-x-2 mb-4">
+                        <select v-model="newChecklistCategory" class="bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl text-xs font-bold outline-none w-24">
+                            <option>重要證件</option><option>生活用品</option><option>數碼產品</option><option>衣物鞋包</option><option>醫療常備</option>
+                        </select>
+                        <input type="text" v-model="newChecklistItem" @keyup.enter="addChecklistItem" class="flex-1 bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl text-xs font-medium outline-none" placeholder="新增自訂行李項目...">
+                        <button @click="addChecklistItem" class="bg-[#38BDF8] text-white px-4 rounded-xl text-xs font-bold">新增</button>
+                    </div>
+
+                    <!-- 分類渲染行李清單 -->
+                    <div class="space-y-4 max-h-[50vh] overflow-y-auto pr-1 no-scrollbar">
+                        <div v-for="category in categories" :key="category" class="space-y-2">
+                            <div class="text-xs font-bold text-slate-700 bg-blue-50/70 border border-[#BAE6FD] px-3 py-1.5 rounded-xl flex justify-between items-center">
+                                <span>📁 {{ category }}</span>
+                                <span class="text-[10px] text-slate-500">({{ getCategoryCheckedCount(category) }} 已打包)</span>
+                            </div>
+                            
+                            <div v-for="item in getItemsByCategory(category)" :key="item.id" 
+                                class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50">
+                                <label class="flex items-center space-x-3 flex-1 cursor-pointer select-none">
+                                    <input type="checkbox" v-model="item.checked" @change="saveChecklist" class="w-4.5 h-4.5 text-blue-500 border-gray-300 rounded focus:ring-blue-400">
+                                    <span :class="{'line-through text-slate-300': item.checked, 'text-slate-700 font-medium': !item.checked}" class="text-sm">
+                                        {{ item.name }}
+                                    </span>
+                                </label>
+                                <button @click="deleteChecklistItem(item.id)" class="text-slate-300 hover:text-red-500 pl-2">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 4. 花費記帳簿 ==================== -->
+            <div v-if="currentTab === 'expenses'" class="space-y-4">
+                <!-- 總花費看板：改為手繪漸層藍色系 -->
+                <div class="bg-gradient-to-r from-[#38BDF8] to-[#0284C7] text-white rounded-2xl p-5 shadow-sm border-2 border-white">
+                    <div class="text-xs opacity-90 font-medium tracking-wide">總計旅遊支出</div>
+                    <div class="text-3xl font-mono font-bold mt-1.5">IDR {{ formatMoney(totalExpenses) }}</div>
+                    <div class="text-xs opacity-90 mt-3 border-t border-white/20 pt-2.5 space-y-1 font-medium">
+                        <div>折合台幣總計: ≈ NT$ {{ formatMoney(Math.round(totalExpenses * 0.00215)) }}</div>
+                    </div>
+                </div>
+
+                <!-- 明細清單 -->
+                <div class="journal-card overflow-hidden divide-y divide-slate-100">
+                    <div class="p-3.5 bg-slate-50 text-xs font-bold text-slate-500 tracking-wider">消費與平分帳目明細</div>
+                    <div v-for="exp in expenses" :key="exp.id" class="p-4 flex flex-col space-y-2.5 bg-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" :class="getExpenseClass(exp.category)">
+                                    {{ exp.category }}
+                                </span>
+                                <h4 class="text-sm font-bold text-slate-800">{{ exp.name }}</h4>
+                            </div>
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-sm font-mono font-bold text-slate-800">IDR {{ formatMoney(exp.amount) }}</span>
+                                <button @click="deleteExpense(exp.id)" class="text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- 平分計算呈現 -->
+                        <div class="text-xs bg-slate-50 p-3 rounded-xl border border-slate-100 text-slate-700 flex flex-col space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span>👥 參與平分：<span class="font-bold text-blue-700">{{ exp.people }} 人</span></span>
+                                <span class="font-mono text-right text-slate-500">每人應付：</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-mono font-bold text-emerald-600 text-sm">IDR {{ formatMoney(Math.round(exp.amount / exp.people)) }}</span>
+                                <span class="block text-[10px] text-slate-400 font-medium">(≈ NT$ {{ formatMoney(Math.round((exp.amount / exp.people) * 0.00215)) }})</span>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-medium pl-1">
+                            {{ exp.date }} · 付款: {{ exp.payMethod }} <span v-if="exp.notes">({{ exp.notes }})</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 新增帳目按鈕 -->
+                <button @click="openAddExpenseModal" class="fixed bottom-6 right-6 bg-[#38BDF8] text-white p-4 rounded-full shadow-lg z-40 border-4 border-white">
+                    <i data-lucide="plus" class="w-7 h-7"></i>
+                </button>
+            </div>
+
         </div>
 
-        <!-- ==========================================
-             分頁 4：EXPENSE & TRANSLATE (全新功能：記帳分帳與隨身翻譯)
-             ========================================== -->
-        <div x-show="activeTab === 'expense'" class="space-y-5 animate-fadeIn">
-            <!-- 1. 印尼盾手動記帳與同伴分帳 -->
-            <div class="space-y-2">
-                <h2 class="text-lg font-black border-b-2 border-hand-sub pb-1">💰 印尼盾記帳 / 同伴分帳</h2>
-                <div class="bg-white p-3.5 border-hand-sub rounded-hand-sketch space-y-3 shadow-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" placeholder="消費項目" x-model="newTitle" class="p-2 border-2 border-hand-sub rounded text-xs bg-transparent focus:outline-none" />
-                        <select x-model="newCategory" class="p-2 border-2 border-hand-sub rounded text-xs bg-white">
-                            <option>餐飲</option><option>交通</option><option>門票</option><option>購物</option>
+        <!-- ==================== 彈出視窗（Modals手帳化） ==================== -->
+        <!-- 1. 新增/編輯行程視窗 -->
+        <div v-if="modals.itinerary" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50">
+            <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto border-t-4 border-[#38BDF8]">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="font-bold text-base text-slate-800">{{ isEditing ? '✏️ 編輯手帳細節' : '➕ 新增手帳行程' }}</h3>
+                    <button @click="modals.itinerary = false" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="space-y-3.5 text-xs">
+                    <div>
+                        <label class="block text-slate-500 font-medium mb-1">行程分類</label>
+                        <select v-model="formItinerary.type" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2.5 rounded-xl font-medium">
+                            <option>景點</option><option>住宿</option><option>美食</option><option>購物</option><option>航班</option><option>其他</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="number" placeholder="印尼盾金額 (Rp)" x-model="newIdr" class="p-2 border-2 border-hand-sub rounded text-xs focus:outline-none" />
-                        <input type="number" placeholder="同行平分人數" x-model="newPeople" class="p-2 border-2 border-hand-sub rounded text-xs focus:outline-none" />
+                        <div>
+                            <label class="block text-slate-500 font-medium mb-1">當天出發時間</label>
+                            <input type="text" v-model="formItinerary.time" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2.5 rounded-xl" placeholder="如: 10:30">
+                        </div>
+                        <div>
+                            <label class="block text-slate-500 font-medium mb-1">營業時間 (選填)</label>
+                            <input type="text" v-model="formItinerary.hours" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2.5 rounded-xl" placeholder="如: 08:00-18:00">
+                        </div>
                     </div>
-                    <button @click="addExpense()" class="w-full bg-bali-accent py-2 border-2 border-hand-sub rounded-hand-sketch font-black text-xs hover:bg-yellow-200 transition">✍️ 記入分帳明細</button>
-                </div>
-
-                <!-- 記帳歷史清單 -->
-                <div class="space-y-2 max-h-36 overflow-y-auto pr-1">
-                    <template x-for="exp in expenses">
-                        <div class="bg-white p-2.5 border-2 border-hand-sub rounded-lg flex justify-between items-center text-xs">
+                    <div>
+                        <label class="block text-slate-500 font-medium mb-1">景點/餐廳名稱 (導航用)</label>
+                        <input type="text" v-model="formItinerary.name" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2.5 rounded-xl font-bold" placeholder="請輸入完整名稱">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 font-medium mb-1">預估門票與費用</label>
+                        <input type="text" v-model="formItinerary.ticket" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2.5 rounded-xl" placeholder="例如: 50,000 IDR">
+                    </div>
+                    <div class="bg-blue-50/60 p-3 rounded-2xl border-2 border-dashed border-[#38BDF8] space-y-2">
+                        <span class="font-bold text-blue-800 block text-[11px]">🚗 銜接交通設定 (選填)</span>
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <p class="font-black text-sm" x-text="exp.title"></p>
-                                <p class="text-gray-400 text-[10px]">總額: Rp <span x-text="exp.idr.toLocaleString()"></span> / <span x-text="exp.people"></span> 人</p>
+                                <label class="text-slate-400 block mb-0.5 text-[10px]">交通方式</label>
+                                <select v-model="formItinerary.transportMethod" class="w-full bg-white border p-1.5 rounded-lg text-slate-700">
+                                    <option value="">無提示</option><option value="包車">包車專車</option><option value="Grab 車">Grab 叫車</option><option value="Gojek 機車">Gojek 機車</option>
+                                </select>
                             </div>
-                            <div class="text-right">
-                                <p class="font-black text-red-400 text-xs">每人 Rp <span x-text="Math.round(exp.idr / exp.people).toLocaleString()"></span></p>
-                                <p class="text-[9px] text-gray-400">約 TWD <span x-text="Math.round((exp.idr / exp.people) / 50)"></span></p>
+                            <div>
+                                <label class="text-slate-400 block mb-0.5 text-[10px]">預估交通時間</label>
+                                <input type="text" v-model="formItinerary.transitTime" class="w-full bg-white border p-1.5 rounded-lg text-slate-700" placeholder="如: 45分鐘">
                             </div>
                         </div>
-                    </template>
-                </div>
-            </div>
-
-            <!-- 2. 當地菜單/場景隨身翻譯 -->
-            <div class="space-y-2 pt-2 border-t border-dashed border-gray-300">
-                <h2 class="text-lg font-black">🗣️ 餐廳菜單隨身翻譯官</h2>
-                <div class="bg-white p-3 border-hand-sub rounded-hand-sketch space-y-2 shadow-sm">
-                    <textarea x-model="translateText" placeholder="看不懂印尼文菜單？在此輸入或點選功能..." class="w-full h-16 p-2 border-2 border-hand-sub rounded text-xs focus:outline-none bg-transparent"></textarea>
-                    
-                    <div class="grid grid-cols-3 gap-1.5">
-                        <button @click="translate('手動輸入')" class="bg-bali-primary text-white py-1 border-2 border-hand-sub rounded text-[10px] font-black">⌨️ 文字翻譯</button>
-                        <button @click="translate('相機拍照')" class="bg-bali-accent py-1 border-2 border-hand-sub rounded text-[10px] font-black">📸 拍照看菜單</button>
-                        <button @click="translate('現場語音')" class="bg-green-50 py-1 border-2 border-hand-sub rounded text-[10px] font-black">🎙️ 語音對話</button>
                     </div>
-                    
-                    <div x-show="translateResult" class="bg-yellow-50/70 p-2 border border-dashed border-hand-sub rounded text-[11px] mt-1 text-blue-800" x-text="translateResult"></div>
+                    <div>
+                        <label class="block text-slate-500 font-medium mb-1">預約狀況 & 備註</label>
+                        <textarea v-model="formItinerary.notes" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2.5 rounded-xl h-20" placeholder="可在此貼上備註細節..."></textarea>
+                    </div>
+                </div>
+                <div class="flex space-x-2 pt-2 border-t">
+                    <button v-if="isEditing" @click="confirmDeleteItinerary" class="flex-1 py-2.5 bg-red-500 text-white font-medium rounded-xl text-xs">🗑️ 刪除項目</button>
+                    <button @click="saveItinerary" class="flex-1 py-2.5 bg-[#38BDF8] text-white font-bold rounded-xl text-xs">💾 儲存</button>
                 </div>
             </div>
         </div>
 
-        <!-- ==========================================
-             分頁 5：MINE (旅行小貼士與行李清單 - 還原第七張圖)
-             ========================================== -->
-        <div x-show="activeTab === 'mine'" class="space-y-4 animate-fadeIn">
-            <h2 class="text-lg font-black border-b-2 border-hand-sub pb-2">📝 旅行實用小貼士</h2>
-            
-            <!-- 打包清單 Checklist -->
-            <div class="bg-white p-4 border-hand-sub rounded-hand-sketch shadow-sm">
-                <h3 class="font-black text-xs text-bali-mint mb-2 flex items-center gap-1">🎒 行李打包 Checklist</h3>
-                <div class="space-y-2">
-                    <template x-for="item in checklist">
-                        <label class="flex items-center space-x-2 cursor-pointer text-xs font-bold">
-                            <input type="checkbox" x-model="item.done" class="w-3.5 h-3.5 accent-bali-primary border-hand-sub rounded-sm" />
-                            <span :class="item.done ? 'line-through text-gray-400' : ''" x-text="item.text"></span>
-                        </label>
-                    </template>
+        <!-- 2. 新增花費記錄視窗 -->
+        <div v-if="modals.expenses" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50">
+            <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-4 max-h-[80vh] overflow-y-auto border-t-4 border-[#38BDF8]">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="font-bold text-base text-slate-800">➕ 記錄新旅遊支出</h3>
+                    <button @click="modals.expenses = false" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-            </div>
-
-            <!-- 當地注意事項 -->
-            <div class="bg-white p-4 border-hand-sub rounded-hand-sketch shadow-sm relative">
-                <div class="absolute -top-2.5 right-4 px-2 py-0.5 bg-bali-coral text-white border-hand-sub text-[9px] rounded font-black">必看</div>
-                <h3 class="font-black text-xs text-bali-coral mb-1">💡 峇里島生存指南</h3>
-                <p class="text-[11px] leading-relaxed text-gray-500">
-                    1. 包車或搭 Grab 務必提早出發，路況極易塞車。<br/>
-                    2. 當地換匯請認明官方大型連鎖店，避免小店詐騙。<br/>
-                    3. 電壓插頭為雙腳圓頭，防蚊液要隨身攜帶。
-                </p>
+                <div class="space-y-3 text-xs">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-slate-500 mb-1">支出類別</label>
+                            <select v-model="formExpense.category" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl">
+                                <option>交通</option><option>飲食</option><option>住宿</option><option>門票</option><option>購物</option><option>其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-500 mb-1">付款方式</label>
+                            <select v-model="formExpense.payMethod" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl">
+                                <option>現金</option><option>信用卡</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 mb-1">項目/店名名稱</label>
+                        <input type="text" v-model="formExpense.name" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl" placeholder="例如：烏布市集手工藤編包">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-slate-500 mb-1">總金額 (IDR)</label>
+                            <input type="number" v-model="formExpense.amount" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl" placeholder="輸入總額">
+                        </div>
+                        <div>
+                            <label class="block text-slate-500 mb-1">參與平分總人數</label>
+                            <input type="number" v-model="formExpense.people" class="w-full bg-blue-50 border-2 border-dashed border-[#38BDF8] text-blue-700 p-2 font-bold rounded-xl" min="1" placeholder="輸入人數">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-slate-500 mb-1">消費日期</label>
+                            <input type="date" v-model="formExpense.date" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-slate-500 mb-1">拆帳備註 (選填)</label>
+                            <input type="text" v-model="formExpense.notes" class="w-full bg-slate-50 border-2 border-[#BAE6FD] p-2 rounded-xl" placeholder="例如：由 Carolin 先付">
+                        </div>
+                    </div>
+                    <div v-if="formExpense.amount && formExpense.people > 0" class="p-2.5 bg-emerald-50 rounded-xl text-emerald-800 text-[11px] font-medium">
+                        💡 試算：每人應出 IDR {{ formatMoney(Math.round(formExpense.amount / formExpense.people)) }} (≈ NT$ {{ formatMoney(Math.round((formExpense.amount / formExpense.people) * 0.00215)) }})
+                    </div>
+                </div>
+                <button @click="saveExpense" class="w-full py-2.5 bg-[#38BDF8] text-white font-bold rounded-xl text-xs">💾 確認登錄帳簿</button>
             </div>
         </div>
-
-        <!-- ==========================================
-             底部固定導航欄 (完美對應設計圖五大手繪圖標配置)
-             ========================================== -->
-        <nav class="absolute bottom-4 left-4 right-4 bg-white border-hand-sub rounded-hand-sketch py-2 px-1 flex justify-between items-center shadow-md z-50">
-            <button @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">🏠</span><span class="text-[9px] font-black mt-0.5">首頁</span>
-            </button>
-            <button @click="activeTab = 'itinerary'" :class="activeTab === 'itinerary' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">🗓️</span><span class="text-[9px] font-black mt-0.5">行程</span>
-            </button>
-            <button @click="activeTab = 'map'" :class="activeTab === 'map' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">🗺️</span><span class="text-[9px] font-black mt-0.5">地圖</span>
-            </button>
-            <button @click="activeTab = 'expense'" :class="activeTab === 'expense' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">💰</span><span class="text-[9px] font-black mt-0.5">記帳翻譯</span>
-            </button>
-            <button @click="activeTab = 'mine'" :class="activeTab === 'mine' ? 'text-bali-primary' : 'text-gray-400'" class="flex flex-col items-center flex-1">
-                <span class="text-xl">📝</span><span class="text-[9px] font-black mt-0.5">貼士</span>
-            </button>
-        </nav>
 
     </div>
 
-    <!-- 簡單的動畫效果 -->
-    <style>
-        .animate-fadeIn { animation: fadeIn 0.3s ease-in-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+    <script>
+        const { createApp, ref, computed, onMounted, nextTick } = Vue;
+
+        createApp({
+            setup() {
+                const currentTab = ref('itinerary');
+                const selectedDay = ref(1);
+                const isEditing = ref(false);
+                const editingId = ref(null);
+                const exchangeIdr = ref(null);
+                const newChecklistItem = ref('');
+                const newChecklistCategory = ref('重要證件');
+                
+                // 🆕 翻譯工具相關響應式變數
+                const translateInput = ref('');
+                const allTranslations = ref([
+                    { chn: '謝謝', ind: 'Terima kasih', pron: '德里馬 卡西' },
+                    { chn: '不客氣', ind: 'Sama-sama', pron: '沙馬 沙馬' },
+                    { chn: '你好 / 早安', ind: 'Selamat pagi', pron: '色拉馬 巴基' },
+                    { chn: '午安', ind: 'Selamat siang', pron: '色拉馬 西昂' },
+                    { chn: '晚安', ind: 'Selamat malam', pron: '色拉馬 馬蘭' },
+                    { chn: '多少錢？', ind: 'Berapa harganya?', pron: '波拉巴 哈爾加尼亞' },
+                    { chn: '可以便宜一點嗎？', ind: 'Bisa kurang?', pron: '比沙 庫讓' },
+                    { chn: '太貴了！', ind: 'Terlalu mahal!', pron: '德爾拉魯 馬哈爾' },
+                    { chn: '不要不辣 (去辣)', ind: 'Tidak pedas', pron: '迪達 巴達斯' },
+                    { chn: '少辣', ind: 'Kurang pedas', pron: '庫讓 巴達斯' },
+                    { chn: '很好吃', ind: 'Sangat enak', pron: '山嘎 額納' },
+                    { chn: '買單 / 結帳', ind: 'Minta bon', pron: '敏達 崩' },
+                    { chn: '救命 / 請幫幫我', ind: 'Tolong saya', pron: '多弄 沙亞' },
+                    { chn: '洗手間在哪裡？', ind: 'Toilet di mana?', pron: '廁所 迪 馬納' },
+                    { chn: '這個', ind: 'Ini', pron: '依尼' },
+                    { chn: '那個', ind: 'Itu', pron: '依度' }
+                ]);
+                const activeTranslations = ref([]);
+
+                const commonPhrases = ref([
+                    { chn: '謝謝' }, { chn: '多少錢？' }, { chn: '可以便宜一點嗎？' }, 
+                    { chn: '不要不辣 (去辣)' }, { chn: '買單 / 結帳' }, { chn: '洗手間在哪裡？' }
+                ]);
+
+                const days = ref([
+                    { id: 1, weekday: 'Sun', date: '9/13' },
+                    { id: 2, weekday: 'Mon', date: '9/14' },
+                    { id: 3, weekday: 'Tue', date: '9/15' },
+                    { id: 4, weekday: 'Wed', date: '9/16' },
+                    { id: 5, weekday: 'Thu', date: '9/17' },
+                    { id: 6, weekday: 'Fri', date: '9/18' }
+                ]);
+
+                const categories = ref(['重要證件', '生活用品', '數碼產品', '衣物鞋包', '醫療常備']);
+                const modals = ref({ itinerary: false, expenses: false });
+                const formItinerary = ref({ type: '景點', name: '', hours: '', ticket: '', notes: '', time: '', transportMethod: '', transitTime: '', transportIcon: 'car' });
+                const formExpense = ref({ category: '飲食', name: '', amount: null, people: 3, date: new Date().toISOString().split('T')[0], payMethod: '現金', notes: '' });
+
+                const itineraryList = ref([
+                    { id: 1, day: 1, type: '航班', name: '酷航 TR875 ➡️ TR280 (前往峇里島)', hours: '00:55 - 10:20', ticket: '500,000 IDR (落地簽)', notes: '抵達機場 (DPS)。需先填妥電子海關申報 (ECD)', time: '10:20', transitTime: '機場 -> 水明漾（45分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 2, day: 1, type: '美食', name: 'Kynd Community (水明漾店)', hours: '06:00-22:00', ticket: '150,000 IDR', notes: '網美蔬食，字母果汁碗必點。', time: '12:15', transitTime: '水明漾 -> 長谷（15分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 3, day: 1, type: '購物', name: '長谷 Love Anchor 特色市集', hours: '09:00-21:00', ticket: '免門票', notes: '時髦文青市集，拍照極美。', time: '14:00', transitTime: '長谷 -> 水明漾海灘（15分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 4, day: 1, type: '美食', name: 'Potato Head Beach Club', hours: '10:00-00:00', ticket: '低消約 100,000 IDR', notes: '殿堂級海灘俱樂部，看最美夕陽。', time: '15:45', transitTime: '水明漾海灘 -> 庫塔飯店（25分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 5, day: 1, type: '住宿', name: 'Discovery Kartika Plaza Hotel (Check-in)', hours: '24小時', ticket: '', notes: '放行李休息。', time: '18:00' },
+                    { id: 6, day: 2, type: '住宿', name: '飯店享用早餐、開箱設施', hours: '07:00-10:00', ticket: '內含', notes: '享受 Discovery 飯店頂級泳池設施。', time: '08:30', transitTime: '庫塔飯店 -> 烏布山區（75分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 7, day: 2, type: '景點', name: '烏布銀飾手作體驗 (Chez Monique)', hours: '需預約', ticket: '視手作課程而定', notes: '【需提前1-2個月預約】手工銀飾打製，建議提早敲定熱門下午時段。', time: '10:30', transitTime: '手作坊 -> 聖泉寺（30分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 8, day: 2, type: '景點', name: '烏布聖泉寺 Pura Tirta Empul', hours: '08:00-18:00', ticket: '50,000 IDR', notes: '世界文化遺產，地下泉水沐浴淨身（可現場換沙龍）。', time: '14:00', transitTime: '聖泉寺 -> 德哥拉朗（15分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 9, day: 2, type: '景點', name: '德哥拉朗梯田 Tegallalang Rice Terrace', hours: '08:00-18:00', ticket: '25,000 IDR', notes: '超美梯田景色、設有高空鞦韆打卡點。', time: '15:30', transitTime: '德哥拉朗 -> 金字塔音療（20分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 10, day: 2, type: '景點', name: '金字塔音療中心 Pyramids Of Chi', hours: '17:15 課程', ticket: '線上完成刷卡', notes: '【需提前1個月預約】選擇下午 17:15 的大眾共鳴核心課程，徹底放鬆。', time: '17:00', transitTime: '烏布 -> 返回庫塔飯店（90分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 11, day: 3, type: '其他', name: '庫塔海灘散步、自由活動', hours: '', ticket: '無', notes: '享受慵懶沒有時間壓力的早晨。', time: '09:00', transitTime: '庫塔 -> 烏魯瓦圖（60分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 12, day: 3, type: '美食', name: '午餐：Fat Chow 亞洲創意料理', hours: '11:00-22:00', ticket: '150,000 IDR', notes: '庫塔超人氣潮流料理。', time: '11:30', transitTime: '餐廳 -> 烏魯瓦圖廟（45分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 13, day: 3, type: '景點', name: '烏魯瓦圖廟斷崖 + 克恰舞火舞 (Kecak Fire Dance)', hours: '火舞 18:00 開始', ticket: '50,000 IDR', notes: '【需提前1個月購買】斷崖夕陽火舞。\n*小心猴子搶奪眼鏡或隨身物品！', time: '16:00', transitTime: '烏魯瓦圖 -> 金巴蘭海灘（40分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 14, day: 3, type: '美食', name: '晚餐：金巴蘭 Menega Cafe 沙灘海鮮BBQ', hours: '11:00-23:00', ticket: '240,000 IDR', notes: '【需提前2週訂位】腳踩沙灘吃海鮮。若無訂位必須於 16:45 前抵達。', time: '19:30', transitTime: '金巴蘭 -> 返回庫塔飯店（25分鐘）', transportMethod: '包車', transportIcon: 'car' },
+                    { id: 15, day: 4, type: '其他', name: '辦理 Check-out 寄放行李', hours: '10:00前', ticket: '', notes: '打包行李寄放櫃檯或放專車。', time: '09:00', transitTime: '庫塔市區移動（10分鐘）', transportMethod: 'Grab 車', transportIcon: 'car' },
+                    { id: 16, day: 4, type: '住宿', name: '移動入住：The Vira Bali Boutique Hotel & Suite', hours: '24小時', ticket: '', notes: '換至第二間池畔設計精品飯店。', time: '10:45', transitTime: '飯店 -> 餐廳（10分鐘）', transportMethod: 'Grab 車', transportIcon: 'car' },
+                    { id: 17, day: 4, type: '美食', name: '午餐：Ayam Betutu Khas Gilimanuk', hours: '11:00-22:00', ticket: '80,000 IDR', notes: '【米其林必比登推薦】道地印尼香料香草雞。', time: '11:30', transitTime: '餐廳 -> 返回飯店（10分鐘）', transportMethod: 'Grab 車', transportIcon: 'car' },
+                    { id: 18, day: 4, type: '其他', name: '飯店 Check-in、開箱頂級泳池設施', hours: '14:00 進房', ticket: '', notes: '飯店好拍、瘋狂開箱。', time: '14:00', transitTime: '飯店 -> SPA店（10分鐘）', transportMethod: 'Grab 車', transportIcon: 'car' },
+                    { id: 19, day: 4, type: '其他', name: '頂級舒壓：2小時精油全身按摩 (Tamaya Spa)', hours: '16:00已約', ticket: '視療程付費', notes: '【需提前2週透過WhatsApp預約】預約 Day 4 下午 16:00 共4位同行。', time: '16:00', transitTime: 'SPA店 -> 餐廳（10分鐘）', transportMethod: 'Grab 車', transportIcon: 'car' },
+                    { id: 20, day: 4, type: '美食', name: '晚餐：The Groovy Iga Bakar 炭烤豬肋排', hours: '11:00-22:00', ticket: '120,000 IDR', notes: '在地人強推！美味醬汁豬肋排。', time: '18:30', transitTime: '餐廳 -> 返回飯店（10分鐘）', transportMethod: 'Grab 車', transportIcon: 'car' },
+                    { id: 21, day: 5, type: '其他', name: '飯店早餐、自由安排探險一日遊', hours: '自由調配', ticket: '', notes: '可選去海神廟、烏布皇宮，或在當地做最後大採買！', time: '09:00' },
+                    { id: 22, day: 6, type: '其他', name: '最後收拾行李與伴手禮 Check-out', hours: '12:00前', ticket: '', notes: '好好的收拾，準備啟程回家。', time: '09:00', transitTime: '飯店 -> 機場（15分鐘）', transportMethod: 'Grab 車', transportIcon: 'car' },
+                    { id: 23, day: 6, type: '航班', name: '華航 CI772 (直飛回台北)', hours: '15:55 - 21:20', ticket: '', notes: '抵達桃園國際機場，返回溫暖的家。', time: '15:55' }
+                ]);
+
+                const checklists = ref([
+                    { id: 1, category: '重要證件', name: '護照 (正本與影本防身)', checked: false },
+                    { id: 2, category: '重要證件', name: '印尼簽證 (電子 e-VOA 憑證列印)', checked: false },
+                    { id: 3, category: '重要證件', name: '手機與 eSIM 卡開通設定說明', checked: false },
+                    { id: 4, category: '重要證件', name: '美金或印尼盾現鈔、海外高回饋信用卡', checked: false },
+                    { id: 5, category: '生活用品', name: '除氯旅遊花灑頭 (峇里島防過敏必備)', checked: false },
+                    { id: 6, category: '生活用品', name: '防曬乳 / 高係數防曬用品', checked: false },
+                    { id: 7, category: '生活用品', name: '防蚊液 / 隨身防蚊噴霧', checked: false },
+                    { id: 8, category: '生活用品', name: '墨鏡與遮陽帽', checked: false },
+                    { id: 9, category: '生活用品', name: '盥洗包 (牙刷牙膏、洗面乳、保養品)', checked: false },
+                    { id: 10, category: '生活用品', name: '乾洗手 / 隨身濕紙巾', checked: false },
+                    { id: 11, category: '數碼產品', name: '萬國轉接頭 / 雙腳圓孔插頭 (220V)', checked: false },
+                    { id: 12, category: '數碼產品', name: '行動電源與手機充電線', checked: false },
+                    { id: 13, category: '數碼產品', name: '自拍桿 / 相機記錄網美景點', checked: false },
+                    { id: 14, category: '數碼產品', name: '耳機 / 行程娛樂必備', checked: false },
+                    { id: 15, category: '衣物鞋包', name: '個人泳衣 / 泳鏡', checked: false },
+                    { id: 16, category: '衣物鞋包', name: '換洗衣物 / 薄外套 (防冷氣房)', checked: false },
+                    { id: 17, category: '衣物鞋包', name: '舒適拖鞋 / 涼鞋', checked: false },
+                    { id: 18, category: '衣物鞋包', name: '個人大毛巾', checked: false },
+                    { id: 19, category: '醫療常備', name: '常用常備藥 (止瀉藥、感冒藥、暈車藥)', checked: false },
+                    { id: 20, category: '醫療常備', name: 'OK繃與小外傷藥膏', checked: false }
+                ]);
+
+                const expenses = ref([
+                    { id: 1, category: '門票', name: '落地簽證費用 (VOA)', amount: 500000, people: 3, date: '2026-09-13', payMethod: '現金', notes: '每人固定費用' },
+                    { id: 2, category: '飲食', name: 'Kynd Community 網美午餐總計', amount: 450000, people: 3, date: '2026-09-13', payMethod: '信用卡', notes: '全體均攤' }
+                ]);
+
+                onMounted(() => {
+                    if (localStorage.getItem('bali_itinerary_v6')) itineraryList.value = JSON.parse(localStorage.getItem('bali_itinerary_v6'));
+                    if (localStorage.getItem('bali_checklist_v6')) checklists.value = JSON.parse(localStorage.getItem('bali_checklist_v6'));
+                    if (localStorage.getItem('bali_expenses_v6')) expenses.value = JSON.parse(localStorage.getItem('bali_expenses_v6'));
+                    // 預設載入前三個翻譯
+                    activeTranslations.value = allTranslations.value.slice(0, 3);
+                    refreshIcons();
+                });
+
+                // 🆕 翻譯核心邏輯
+                const searchTranslation = () => {
+                    if (!translateInput.value.trim()) {
+                        activeTranslations.value = allTranslations.value.slice(0, 3);
+                        return;
+                    }
+                    const query = translateInput.value.trim().toLowerCase();
+                    activeTranslations.value = allTranslations.value.filter(t => 
+                        t.chn.toLowerCase().includes(query) || t.ind.toLowerCase().includes(query)
+                    );
+                };
+
+                const setTranslateInput = (val) => {
+                    translateInput.value = val;
+                    searchTranslation();
+                };
+
+                const copyText = (text) => {
+                    navigator.clipboard.writeText(text);
+                    alert('已複製印尼語: ' + text + ' 📋');
+                };
+
+                const saveToLocal = (key, data) => {
+                    localStorage.setItem(key, JSON.stringify(data));
+                    refreshIcons();
+                };
+
+                const refreshIcons = () => {
+                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                };
+
+                const changeTab = (tab) => {
+                    currentTab.value = tab;
+                    refreshIcons();
+                };
+
+                const filteredItinerary = computed(() => {
+                    return itineraryList.value
+                        .filter(item => item.day === selectedDay.value)
+                        .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+                });
+
+                const checkedCount = computed(() => checklists.value.filter(i => i.checked).length);
+                const totalExpenses = computed(() => expenses.value.reduce((sum, item) => sum + Number(item.amount || 0), 0));
+                const computedTwd = computed(() => exchangeIdr.value ? formatMoney(Math.round(exchangeIdr.value * 0.00215)) : 0);
+
+                const formatMoney = (val) => {
+                    if (!val && val !== 0) return '0';
+                    return Number(val).toLocaleString('en-US');
+                };
+
+                const getItemsByCategory = (cat) => checklists.value.filter(item => item.category === cat || (!item.category && cat === '生活用品'));
+                const getCategoryCheckedCount = (cat) => getItemsByCategory(cat).filter(i => i.checked).length;
+
+                const getTypeClass = (type) => {
+                    const maps = { '景點': 'bg-emerald-50 text-emerald-700', '住宿': 'bg-blue-50 text-blue-700', '美食': 'bg-orange-50 text-orange-700', '購物': 'bg-purple-50 text-purple-700', '航班': 'bg-indigo-50 text-indigo-700' };
+                    return maps[type] || 'bg-gray-50 text-gray-700';
+                };
+
+                const getExpenseClass = (cat) => {
+                    const maps = { '交通': 'bg-blue-100 text-blue-700', '飲食': 'bg-orange-100 text-orange-700', '住宿': 'bg-indigo-100 text-indigo-700', '門票': 'bg-emerald-100 text-emerald-700', '購物': 'bg-purple-100 text-purple-700' };
+                    return maps[cat] || 'bg-gray-100 text-gray-700';
+                };
+
+                const openAddItineraryModal = () => {
+                    isEditing.value = false;
+                    formItinerary.value = { type: '景點', name: '', hours: '', ticket: '', notes: '', time: '', transportMethod: '', transitTime: '', transportIcon: 'car' };
+                    modals.value.itinerary = true;
+                    refreshIcons();
+                };
+
+                const openEditItinerary = (item) => {
+                    isEditing.value = true;
+                    editingId.value = item.id;
+                    formItinerary.value = { ...item };
+                    modals.value.itinerary = true;
+                    refreshIcons();
+                };
+
+                const saveItinerary = () => {
+                    if (!formItinerary.value.name) return alert('請填寫行程項目名稱');
+                    formItinerary.value.transportIcon = formItinerary.value.transportMethod.includes('機車') ? 'bike' : 'car';
+
+                    if (isEditing.value) {
+                        const idx = itineraryList.value.findIndex(i => i.id === editingId.value);
+                        itineraryList.value[idx] = { ...formItinerary.value };
+                    } else {
+                        itineraryList.value.push({ id: Date.now(), day: selectedDay.value, ...formItinerary.value });
+                    }
+                    modals.value.itinerary = false;
+                    saveToLocal('bali_itinerary_v6', itineraryList.value);
+                };
+
+                const confirmDeleteItinerary = () => {
+                    if (confirm('確定要永久刪除此項行程嗎？')) {
+                        itineraryList.value = itineraryList.value.filter(i => i.id !== editingId.value);
+                        modals.value.itinerary = false;
+                        saveToLocal('bali_itinerary_v6', itineraryList.value);
+                    }
+                };
+
+                const addChecklistItem = () => {
+                    if (!newChecklistItem.value.trim()) return;
+                    checklists.value.push({ id: Date.now(), category: newChecklistCategory.value, name: newChecklistItem.value.trim(), checked: false });
+                    newChecklistItem.value = '';
+                    saveToLocal('bali_checklist_v6', checklists.value);
+                };
+
+                const deleteChecklistItem = (id) => {
+                    checklists.value = checklists.value.filter(i => i.id !== id);
+                    saveToLocal('bali_checklist_v6', checklists.value);
+                };
+
+                const saveChecklist = () => saveToLocal('bali_checklist_v6', checklists.value);
+
+                const openAddExpenseModal = () => {
+                    formExpense.value = { category: '飲食', name: '', amount: null, people: 3, date: new Date().toISOString().split('T')[0], payMethod: '現金', notes: '' };
+                    modals.value.expenses = true;
+                };
+
+                const saveExpense = () => {
+                    if (!formExpense.value.name || !formExpense.value.amount || !formExpense.value.people) return alert('請完整填寫項目、金額與平分人數！');
+                    expenses.value.push({ id: Date.now(), ...formExpense.value });
+                    modals.value.expenses = false;
+                    saveToLocal('bali_expenses_v6', expenses.value);
+                };
+
+                const deleteExpense = (id) => {
+                    expenses.value = expenses.value.filter(e => e.id !== id);
+                    saveToLocal('bali_expenses_v6', expenses.value);
+                };
+
+                return {
+                    currentTab, selectedDay, days, categories, filteredItinerary, checklists, checkedCount, newChecklistItem, newChecklistCategory, expenses, totalExpenses, exchangeIdr, computedTwd, modals, formItinerary, formExpense, isEditing,
+                    translateInput, activeTranslations, commonPhrases, searchTranslation, setTranslateInput, copyText,
+                    getTypeClass, getExpenseClass, formatMoney, changeTab, openAddItineraryModal, openEditItinerary, saveItinerary, confirmDeleteItinerary, addChecklistItem, deleteChecklistItem, saveChecklist, openAddExpenseModal, saveExpense, deleteExpense, refreshIcons, getItemsByCategory, getCategoryCheckedCount
+                };
+            }
+        }).mount('#app');
+    </script>
 </body>
 </html>
